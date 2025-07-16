@@ -66,7 +66,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 #
 ### What Can I Back Up?
 
-FileSyncTool supports backing up a wide range of files and directories, including:
+FileSync supports backing up a wide range of files and directories, including:
 
 - Regular files of any type, such as documents, images, videos, and executables.
 - Hidden files and folders (e.g., dotfiles and dotfolders on Linux like `.bashrc`, and hidden files/folders on Windows like `desktop.ini` or hidden system folders).
