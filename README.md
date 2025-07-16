@@ -7,6 +7,8 @@ FileSync is a fast and highly configurable file synchronization utility for loca
 
 Built in modern C++, the tool leverages multithreaded scanning and hashing to accelerate sync decisions across large directories. A dedicated copy manager serializes I/O operations per source to prevent disk contention and ensure stable performance. FileSync includes robust failure tracking: unsuccessful copy operations are detected and logged, and metadata is updated post-copy to reflect actual copy status, allowing precise reporting and recovery on future syncs. This makes it particularly well-suited for repeated backups, local mirroring, and any scenario requiring reliable, high-throughput file synchronization with built-in integrity tracking.
 
+**Note:** FileSync scans only the configured source directories during synchronization. It does not perform a full scan or analysis of the destination directory’s contents, although it does verify the existence of destination folders and files as needed during the copy process. Updated files are overwritten in the destination along with their metadata. Files deleted from the source are not removed from the destination, ensuring that the sync is incremental and non-destructive. This approach improves performance and avoids unnecessary disk access on the destination and allows users to access deleted files after multiple syncs providing a safeguard against accidental deletions. A configurable flag to enable automatic deletion synchronization after x number of runs is currently under development.
+
 #
 ### Features
 
@@ -149,12 +151,12 @@ Below are the places where you can edit the following things:
   Configure the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
 
 - **Metadata Cache File Location**  
-  Modify the path and filename used for storing metadata cache files.
+  Modify the path and filename used for storing metadata cache files. Default is same directory as the binary and `Meta_Cache`.
 
 - **Sync Log File Location**  
-  Modify the path and filename used for storing log files.
+  Modify the path and filename used for storing log files. Default is same directory as the binary and `Sync_Logs`.
 
 - **Configuration File Location**  
-  Modify the path and filename used for storing log files.
+  Modify the path and filename used for storing log files. Default is same directory as the binary and `Config.txt`.
 
 - Add more here
