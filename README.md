@@ -101,18 +101,35 @@ cmake --build . --config Release
 
 FileSyncTool uses a simple text-based configuration file to control its behavior. The config file supports defining:
 
-- Source directories (absolute paths only)
+- Source directories (absolute paths only) (can be files and/or directories, both supported)
 - Destination directory (absolute path)
 - File and folder exclusions by name (absolute path only)
-- Sync mode (`BG`, `Inter`, `GodSpeed`)
-- Maximum number of log files to retain (`MaxLogFiles`)
+- Sync mode for defining threadcount and resource utilization
+- Maximum number of log files to retain
+- Disk type for copy thrashing prevention
+- Stale file removal of files no longer present in the source from the destination
+- Number of runs before stale files are removed from stored cache and destination(if enabled)
 
-**Note:** The order of entries in the config file does not matter. Sources, excludes, and options can appear in any sequence.
+**Note:** The order of entries in the config file does not matter. Sources, excludes, and options can appear in any sequence. Refer to Customization below for more info.
+
+### Acceptable Values for Configuration Flags
+
+```
+Source = (Absolute Source Path of file or directory)
+Destination = (Absolute Destination Path)
+Exclude = (Absolute Path of file or directory to be exlcuded)
+Mode = (BG/Inter/GodSpeed)
+MaxLogFiles = (integer value)
+DiskType = (SSD/HDD) (HDD for no copy thrashing [sequential writes per source], SSD for copy thrashing [parallel writes multiple sources])
+DeleteStaleFromDest = (YES/NO)
+StaleEntries = (integer value)
+```
 
 #### Sample Configuration Files
 Windows
 ```
 Source = C:\Users\YourName\Documents
+Source = C:\Users\YourName\Desktop\To-Do.txt
 Source = D:\Projects
 
 Destination = D:\Backup
@@ -122,17 +139,25 @@ Exclude = D:\Projects\Python
 
 Mode = Inter
 MaxLogFiles = 5
+DiskType = HDD
+DeleteStaleFromDest = NO
+StaleEntries = 10
+
 ```
 Linux
 ```
 Source = /home/username/Documents
 Source = /var/media
+Source = /usr/include/zlib.h
 Source = /mnt/c/users/YourName/Documents
 
 Destination = /mnt/backup
 
-Mode = BG
+Mode = GodSpeed
 MaxLogFiles = 10
+DiskType = SSD
+DeleteStaleFromDest = YES
+StaleEntries = 2
 ```
 
 #
@@ -161,4 +186,13 @@ Below are the places where you can edit the following things:
 - **Configuration File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Config.txt`.
 
-- Add more here
+- **Disk Type Optimization**  
+  Set the type of disk (HDD or SSD) to optimize copy behavior and avoid disk thrashing. Default is `HDD`.
+
+- **Stale File Deletion from Destination**  
+  Enables or disables removal of files from the destination if they’ve been missing from the source for a configurable number of syncs. Default is `NO`.
+  When DeleteStaleFromDest = YES, stale files (those no longer present in the source) are removed from the destination after a set number of runs (StaleEntries).
+  **Note:** This process does not delete empty directories that may remain after file deletion. This ensures directory structure integrity is preserved and user is expected to delete the directory.
+
+- **Stale File Removal Threshold**  
+  Set how many consecutive sync runs a file must be missing from the source before it is considered stale [and deleted from the destination (if enabled)]. Default is `5`.
