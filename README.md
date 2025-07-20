@@ -78,7 +78,9 @@ FileSync supports backing up a wide range of files and directories, including:
 **Note:**  
 - Only absolute paths are supported for both sources and destinations.
 - Symbolic links are ignored to prevent circular references and unintended copies.
-
+- Tool assumes that no failure occurs during the first sync run. A successful initial sync ensures accurate metadata and smooth operation in future runs.
+- Tool does not check for available disk space on the destination before copying. If the destination runs out of space during transfer, the sync will stop and mark files as incomplete. Simply rerun the program, and it will automatically enter failure recovery mode to continue any pending or partially completed file transfers.
+  
 #
 ### Installation
 
