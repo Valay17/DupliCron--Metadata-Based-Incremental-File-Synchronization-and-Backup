@@ -161,7 +161,7 @@ DiskType = SSD
 DeleteStaleFromDest = YES
 StaleEntries = 2
 ```
-Source and Destination are Mandatory, Rest all are Optional
+**Source and Destination are Mandatory, Rest all are Optional**
 
 #
 ### Usage
