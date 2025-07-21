@@ -57,6 +57,9 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 - **Live Console Feedback**  
   Real-time sync and copy updates are shown in the terminal, with optional log file support.
 
+- **Failure Mode**  
+  Ensures safe, resumable syncing in case of critical failures such as disk full, I/O errors, or destination disconnection. Copy operations are verified per source before being marked complete, and any failed files are automatically retried on the next run without affecting already synced files, allowing users to fix the issue and resume syncing cleanly using the existing cache.
+
 #
 ### Why Use This Tool?
 
@@ -80,6 +83,7 @@ FileSync supports backing up a wide range of files and directories, including:
 - Symbolic links are ignored to prevent circular references and unintended copies.
 - Tool assumes that no failure occurs during the first sync run. A successful initial sync ensures accurate metadata and smooth operation in future runs.
 - Tool does not check for available disk space on the destination before copying. If the destination runs out of space during transfer, the sync will stop and mark files as incomplete. Simply rerun the program, and it will automatically enter failure recovery mode to continue any pending or partially completed file transfers.
+- If you have very large or deeply nested directory structures, it is recommended to split your sources into separate entries in the config file. This ensures quicker recovery from failures on a per-source basis, enables better parallelism, improves isolation of errors, and minimizes the risk of a single failure affecting the entire sync process.
   
 #
 ### Installation
