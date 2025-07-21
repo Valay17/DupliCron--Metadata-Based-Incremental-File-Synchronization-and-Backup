@@ -52,7 +52,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
   Logs are categorized by severity, helping users trace sync events or failure points clearly.
 
 - **Live Console Feedback**  
-  Real time sync and copy updates are shown in the terminal, with optional log file support.
+  Real time sync and copy updates are shown in the terminal.
 
 - **Failure Mode**  
   Ensures safe, resumable syncing in case of critical failures such as disk full, I/O errors, or destination disconnection. Copy operations are verified per source before being marked complete, and any failed files are automatically retried on the next run without affecting already synced files, allowing users to fix the issue and resume syncing cleanly using the existing cache.
