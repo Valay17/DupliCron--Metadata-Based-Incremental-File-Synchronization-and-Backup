@@ -155,6 +155,8 @@ Source = /mnt/c/users/YourName/Documents
 
 Destination = /mnt/backup
 
+Exclude = /mnt/c/users/YourName/Documents/help.txt
+
 Mode = GodSpeed
 MaxLogFiles = 10
 DiskType = SSD
