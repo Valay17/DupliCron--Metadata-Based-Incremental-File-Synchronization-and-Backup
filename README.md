@@ -60,7 +60,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 #
 ### Why Use This Tool?
 
-- Backing up personal files and documents to external hard drives or USB drives.
+- Backing up personal files and documents to o any storage medium accessible via the local file system such external hard drives, network-mounted drives or USB drives.
 - Syncing development projects and code repositories across multiple workstations or laptops.
 - Maintaining up to date media libraries (photos, videos, music) without redundant copying.
 - Running scheduled incremental backups with minimal impact on system resources.
