@@ -15,13 +15,13 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 - **Metadata-Based Incremental Sync**  
   Uses a combination of file size and modification time, which are hashed and stored in a binary cache to detect changed files across sync runs. This avoids unnecessary file copies and speeds up subsequent synchronizations.
 
-- **Multi-Source and Multi-Destination Support**  
-  Supports syncing from multiple user-defined source directories to a single destination per run. To sync to multiple destinations, separate runs of the tool are performed, with each destination managed independently, including its own metadata cache and sync state. This design allows clean separation between backup targets (e.g., external drives, network shares, secondary partitions) without cross-contamination of metadata.
+- **Multi Source and Multi Destination Support**  
+  Supports syncing from multiple user defined source directories to a single destination per run. To sync to multiple destinations, separate runs of the tool are performed, with each destination managed independently, including its own metadata cache and sync state. This design allows clean separation between backup targets (e.g., external drives, network shares, secondary partitions) without cross contamination of metadata.
 
-- **Per-Source Serialized Copying**  
-  Files within each source are copied one at a time, in the order they were discovered. This approach minimizes disk thrashing and significantly improves performance on HDDs. For SSDs or high-performance environments(NAS), this behavior can be optionally disabled to enable parallel file copying per source.
+- **Per Source Serialized Copying**  
+  Files within each source are copied one at a time, in the order they were discovered. This approach minimizes disk thrashing and significantly improves performance on HDDs. For SSDs or high performance environments(NAS), this behavior can be optionally disabled to enable parallel file copying per source.
 
-- **Post-Copy Metadata Update**  
+- **Post Copy Metadata Update**  
   Metadata is updated only after a file has been physically and verifiably copied, ensuring that the cache reflects the true state of the destination. This prevents corrupt or incomplete sync states from being recorded and maintains cache integrity across runs.
 
 - **Failure Detection and Recovery Support**  
@@ -31,16 +31,16 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
   Directories are scanned and files are hashed in parallel using a custom thread pool. This significantly improves performance on large directories while preserving system responsiveness through controlled concurrency.
 
 - **Configurable Sync Modes**  
-  All behavior of FileSyncTool is controlled via a simple, text-based configuration file. This file defines source/destination paths, exclusions, sync mode, logging, stale file handling, and other advanced flags. Users can fully customize how the sync operates by modifying the config file.
+  All behavior of FileSync is controlled via a simple, text based configuration file. This file defines source/destination paths, exclusions, sync mode, logging, stale file handling, and other advanced flags. Users can fully customize how the sync operates by modifying the config file.
 
-- **Thread-Safe Copy Manager**  
-  A dedicated I/O thread handles copy execution by dequeuing per-source copy queues, ensuring one-at-a-time copy per source for consistent disk behavior.
+- **Thread Safe Copy Manager**  
+  A dedicated I/O thread handles copy execution by dequeuing per source copy queues, ensuring one at a time copy per source for consistent disk behavior.
 
 - **Full Overlap Between Sync and Copy Phases**  
-  Sync decisions (scanning and hashing) for one source can run while another source's files are being copied — maximizing throughput.
+  Sync decisions (scanning and hashing) for one source can run while another source's files are being copied, maximizing throughput.
 
 - **Efficient Queue Synchronization**  
-  Thread-safe mechanisms using mutexes and condition variables coordinate sync threads and the global copy manager.
+  Thread safe mechanisms using mutexes and condition variables coordinate sync threads and the global copy manager.
 
 - **Config File Driven Operation**  
   Uses a configuration file to define key parameters: source directories and destination paths (absolute only), explicit file and folder exclusions by name (no pattern matching), sync mode (`BG`, `Inter`, `GodSpeed`) and maximum number of log files to retain (`maxLogFiles`).
@@ -55,7 +55,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
   Logs are categorized by severity, helping users trace sync events or failure points clearly.
 
 - **Live Console Feedback**  
-  Real-time sync and copy updates are shown in the terminal, with optional log file support.
+  Real time sync and copy updates are shown in the terminal, with optional log file support.
 
 - **Failure Mode**  
   Ensures safe, resumable syncing in case of critical failures such as disk full, I/O errors, or destination disconnection. Copy operations are verified per source before being marked complete, and any failed files are automatically retried on the next run without affecting already synced files, allowing users to fix the issue and resume syncing cleanly using the existing cache.
@@ -65,7 +65,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 
 - Backing up personal files and documents to external hard drives or USB drives.
 - Syncing development projects and code repositories across multiple workstations or laptops.
-- Maintaining up-to-date media libraries (photos, videos, music) without redundant copying.
+- Maintaining up to date media libraries (photos, videos, music) without redundant copying.
 - Running scheduled incremental backups with minimal impact on system resources.
 
 #
@@ -83,8 +83,8 @@ FileSync supports backing up a wide range of files and directories, including:
 - Symbolic links are ignored to prevent circular references and unintended copies.
 - Tool assumes that no failure occurs during the first sync run. A successful initial sync ensures accurate metadata and smooth operation in future runs.
 - Tool does not check for available disk space on the destination before copying. If the destination runs out of space during transfer, the sync will stop and mark files as incomplete. Simply rerun the program, and it will automatically enter failure recovery mode to continue any pending or partially completed file transfers.
-- If you have very large or deeply nested directory structures, it is recommended to split your sources into separate entries in the config file. This ensures quicker recovery from failures on a per-source basis, enables better parallelism, improves isolation of errors, and minimizes the risk of a single failure affecting the entire sync process.
-- The tool is designed to operate on any storage medium accessible via a standard file system path — including local disks, external drives, mounted network shares (such as SMB/CIFS or NFS), iSCSI volumes, and FUSE-mounted systems. Protocol-based sources like FTP, SFTP, or HTTP are not natively supported unless mounted into the local file system using 3rd party tools.
+- If you have very large or deeply nested directory structures, it is recommended to split your sources into separate entries in the config file. This ensures quicker recovery from failures on a per source basis, enables better parallelism, improves isolation of errors, and minimizes the risk of a single failure affecting the entire sync process.
+- The tool is designed to operate on any storage medium accessible via a standard file system path including local disks, external drives, mounted network shares (such as SMB/CIFS or NFS), iSCSI volumes, and FUSE mounted systems. Protocol based sources like FTP, SFTP, or HTTP are not natively supported unless mounted into the local file system using 3rd party tools.
   
 #
 ### Installation
@@ -104,7 +104,7 @@ cmake --build . --config Release
 ### Configuration File Info
 
 
-FileSyncTool uses a simple text-based configuration file to control its behavior. The config file supports defining:
+FileSync uses a simple text based configuration file to control its behavior. The config file supports defining:
 
 - Source directories (absolute paths only) (can be files and/or directories, both supported)
 - Destination directory (absolute path)
@@ -167,7 +167,7 @@ StaleEntries = 2
 
 #
 ### Usage
-Simply run the FileSyncTool executable. It automatically loads the configuration file named `Config.txt` located in the same directory as the binary.
+Simply run the FileSync executable. It automatically loads the configuration file named `Config.txt` located in the same directory as the binary.
 ```
 FileSync.exe
 ```
