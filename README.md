@@ -121,10 +121,10 @@ Source = (Absolute Source Path of file or directory) [Local, UNC, POSIX and Mapp
 Destination = (Absolute Destination Path)
 Exclude = (Absolute Path of file or directory to be excluded)
 Mode = (BG/Inter/GodSpeed)
-MaxLogFiles = (integer value)
 DiskType = (SSD/HDD) (HDD for no copy thrashing [sequential writes per source], SSD for copy thrashing [parallel writes multiple sources])
-DeleteStaleFromDest = (YES/NO)
 StaleEntries = (integer value)
+DeleteStaleFromDest = (YES/NO)
+MaxLogFiles = (integer value)
 ```
 
 #### Sample Configuration Files
@@ -179,25 +179,36 @@ FileSync.exe
 ### Customization Locations in Code
 Below are the places where you can edit the following things:
 
-- **Thread Count**  
-  Configure the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
-
-- **Metadata Cache File Location**  
-  Modify the path and filename used for storing metadata cache files. Default is same directory as the binary and `Meta_Cache`.
+- **Configuration File Location**  
+  Modify the path and filename used for storing log files. Default is same directory as the binary and `Config.txt`.
+  ConfigGlobal.cpp `Line 21`
 
 - **Sync Log File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Sync_Logs`.
+  ConfigGlobal.cpp `Line 22`
 
-- **Configuration File Location**  
-  Modify the path and filename used for storing log files. Default is same directory as the binary and `Config.txt`.
+- **Metadata Cache File Location**  
+  Modify the path and filename used for storing metadata cache files. Default is same directory as the binary and `Meta_Cache`.
+  ConfigGlobal.cpp `Line 23`
 
+- **Sync Mode and Thread Count**  
+  ConfigGlobal.cpp `Line 24`,`Line 25` - Modify the default value the tool runs in. Default is `BG` and `2`.
+  ConfigParser.cpp `Line 214` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
+  
 - **Disk Type Optimization**  
   Set the type of disk (HDD or SSD) to optimize copy behavior and avoid disk thrashing. Default is `HDD`.
-
+  ConfigGlobal.cpp `Line 26`
+  
+- **Stale File Removal Threshold**  
+  Set how many consecutive sync runs a file must be missing from the source before it is considered stale [and deleted from the destination (if enabled)]. Default is `5`.
+  ConfigGlobal.cpp `Line 27`
+  
 - **Stale File Deletion from Destination**  
   Enables or disables removal of files from the destination if they’ve been missing from the source for a configurable number of syncs. Default is `NO`.
   When DeleteStaleFromDest = YES, stale files (those no longer present in the source) are removed from the destination after a set number of runs (StaleEntries).
   **Note:** This process does not delete empty directories that may remain after file deletion. This ensures directory structure integrity is preserved and user is expected to delete the directory.
+  ConfigGlobal.cpp `Line 28`
 
-- **Stale File Removal Threshold**  
-  Set how many consecutive sync runs a file must be missing from the source before it is considered stale [and deleted from the destination (if enabled)]. Default is `5`.
+- **Max Log Files**  
+  Sets the maximum number of log files to retain before older logs are purged. Helps manage disk space used by logs. Default is 10.  
+  ConfigGlobal.cpp `Line 29`
