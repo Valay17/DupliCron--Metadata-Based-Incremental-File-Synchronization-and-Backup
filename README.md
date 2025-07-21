@@ -31,7 +31,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
   Directories are scanned and files are hashed in parallel using a custom thread pool. This significantly improves performance on large directories while preserving system responsiveness through controlled concurrency.
 
 - **Configurable Sync Modes**  
-  Supports multiple operational modes: **BG (Background)**, **Inter (Intermediate)**, and **GodSpeed** that let users control the tool’s performance profile. Modes adjust threading intensity and resource usage to fit different priorities, from low-impact background syncing to maximum-speed batch operations.
+  All behavior of FileSyncTool is controlled via a simple, text-based configuration file. This file defines source/destination paths, exclusions, sync mode, logging, stale file handling, and other advanced flags. Users can fully customize how the sync operates by modifying the config file.
 
 - **Thread-Safe Copy Manager**  
   A dedicated I/O thread handles copy execution by dequeuing per-source copy queues, ensuring one-at-a-time copy per source for consistent disk behavior.
