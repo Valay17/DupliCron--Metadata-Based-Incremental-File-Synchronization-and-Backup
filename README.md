@@ -212,3 +212,9 @@ Below are the places where you can edit the following things:
 - **Max Log Files**  
   Sets the maximum number of log files to retain before older logs are purged. Helps manage disk space used by logs. Default is 10.  
   ConfigGlobal.cpp `Line 29`
+
+#
+### License
+
+You are free to use and modify this software for personal or internal purposes.  
+However, redistribution or public distribution of this software or any modified versions is **not permitted** without explicit permission.
