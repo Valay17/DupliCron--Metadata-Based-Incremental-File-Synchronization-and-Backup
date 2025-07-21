@@ -30,7 +30,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 - **Multithreaded Scanning and Hashing**  
   Directories are scanned and files are hashed in parallel using a custom thread pool. This significantly improves performance on large directories while preserving system responsiveness through controlled concurrency.
 
-- **Configurable Sync Modes**  
+- **Config File Driven Operation**  
   All behavior of FileSync is controlled via a simple, text based configuration file. This file defines source/destination paths, exclusions, sync mode, logging, stale file handling, and other advanced flags. Users can fully customize how the sync operates by modifying the config file.
 
 - **Thread Safe Copy Manager**  
@@ -41,9 +41,6 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 
 - **Efficient Queue Synchronization**  
   Thread safe mechanisms using mutexes and condition variables coordinate sync threads and the global copy manager.
-
-- **Config File Driven Operation**  
-  Uses a configuration file to define key parameters: source directories and destination paths (absolute only), explicit file and folder exclusions by name (no pattern matching), sync mode (`BG`, `Inter`, `GodSpeed`) and maximum number of log files to retain (`maxLogFiles`).
 
 - **Safe Path Handling and Validation**  
   Only absolute paths are supported and resolved; invalid or inaccessible paths are detected and reported before syncing begins.
