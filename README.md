@@ -117,9 +117,9 @@ FileSync uses a simple text based configuration file to control its behavior. Th
 ### Acceptable Values for Configuration Flags
 
 ```
-Source = (Absolute Source Path of file or directory)
+Source = (Absolute Source Path of file or directory) [Local, UNC, POSIX and Mapped Paths]
 Destination = (Absolute Destination Path)
-Exclude = (Absolute Path of file or directory to be exlcuded)
+Exclude = (Absolute Path of file or directory to be excluded)
 Mode = (BG/Inter/GodSpeed)
 MaxLogFiles = (integer value)
 DiskType = (SSD/HDD) (HDD for no copy thrashing [sequential writes per source], SSD for copy thrashing [parallel writes multiple sources])
@@ -161,6 +161,7 @@ DiskType = SSD
 DeleteStaleFromDest = YES
 StaleEntries = 2
 ```
+Source and Destination are Mandatory, Rest all are Optional
 
 #
 ### Usage
