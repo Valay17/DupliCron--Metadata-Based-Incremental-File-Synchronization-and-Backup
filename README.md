@@ -84,6 +84,7 @@ FileSync supports backing up a wide range of files and directories, including:
 - Tool assumes that no failure occurs during the first sync run. A successful initial sync ensures accurate metadata and smooth operation in future runs.
 - Tool does not check for available disk space on the destination before copying. If the destination runs out of space during transfer, the sync will stop and mark files as incomplete. Simply rerun the program, and it will automatically enter failure recovery mode to continue any pending or partially completed file transfers.
 - If you have very large or deeply nested directory structures, it is recommended to split your sources into separate entries in the config file. This ensures quicker recovery from failures on a per-source basis, enables better parallelism, improves isolation of errors, and minimizes the risk of a single failure affecting the entire sync process.
+- The tool is designed to operate on any storage medium accessible via a standard file system path — including local disks, external drives, mounted network shares (such as SMB/CIFS or NFS), iSCSI volumes, and FUSE-mounted systems. Protocol-based sources like FTP, SFTP, or HTTP are not natively supported unless mounted into the local file system using 3rd party tools.
   
 #
 ### Installation
