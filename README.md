@@ -60,7 +60,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 #
 ### Why Use This Tool?
 
-- Backing up personal files and documents to o any storage medium accessible via the local file system such external hard drives, network-mounted drives or USB drives.
+- Backing up personal files and documents to any storage medium accessible via the local file system such external hard drives, network-mounted drives or USB drives.
 - Syncing development projects and code repositories across multiple workstations or laptops.
 - Maintaining up to date media libraries (photos, videos, music) without redundant copying.
 - Running scheduled incremental backups with minimal impact on system resources.
@@ -212,6 +212,16 @@ Below are the places where you can edit the following things:
 - **Max Log Files**  
   Sets the maximum number of log files to retain before older logs are purged. Helps manage disk space used by logs. Default is 10.  
   ConfigGlobal.cpp `Line 29`
+
+- **Thread Count for Hasher**
+  Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number.
+  FileHasher.hpp `Line 15`
+
+- **Flags for robocopy/dd commands**
+  Modify the default flags used by the robocopy/dd commands.
+  FileCopier.hpp `Line 77`,`Line 131` respectively
+  
+  
 
 #
 ### License
