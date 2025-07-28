@@ -115,7 +115,7 @@ FileSync uses a simple text based configuration file to control its behavior. Th
 - Number of runs before stale files are removed from stored cache and destination(if enabled)
 
 **Note:** 
-- The order of entries in the config file does not matter. Sources, excludes, and options can appear in any sequence. Refer to Customization below for more info.
+- The order of entries in the config file does not matter. Sources, excludes, and flags can appear in any sequence. Refer to Customization below for more info.
 - Flags and their Values are Case Sensitive.
 
 ### Acceptable Values for Configuration Flags
@@ -221,17 +221,17 @@ Below are the places where you can edit the following things:
   ConfigGlobal.cpp `Line 28`
 
 - **Max Log Files**  
-  Sets the maximum number of log files to retain before older logs are purged. Helps manage disk space used by logs. Default is 10.  
+  Sets the maximum number of log files to retain before older logs are purged. Helps manage disk space used by logs. Default is `10`.  
 
   ConfigGlobal.cpp `Line 29`
 
 - **Thread Count for Hasher**  
-  Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number.
+  Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number. Default is `Hardware Max Supported Thread Count`.
 
   FileHasher.hpp `Line 15`
 
 - **File Size Threshold for Small and Large File Queue**  
-  Defines the size boundary used to classify files as small or large, determining how they are queued and processed during synchronization.
+  Defines the size boundary used to classify files as small or large, determining how they are queued and processed during synchronization. Default is `2 GB`.
 
   SyncEngine.cpp `Line 19`
   
@@ -241,10 +241,17 @@ Below are the places where you can edit the following things:
   FileCopier.cpp `Line 77`,`Line 131` respectively
 
 - **File Size Threshold for Small and Large File Copy Commands**  
-  Defines the size boundary used to classify files as small or large, determining which command is used to copy them.
+  Defines the size boundary used to classify files as small or large, determining which command is used to copy them. Default is `2 GB`.
   
   **Note:** This setting directly influences how files are processed and which copy strategy is applied. It is intended for advanced users who understand the performance implications of reclassifying file sizes. Changing this may degrade sync performance. Proceed with caution.
   FileCopier.cpp `Line 63`
+
+- **EnableBackupCopyAfterRun**  
+  Creates a backup copy of the metadata cache after each successful run for added integrity protection. Saved as `.BackupCache` hidden directory.
+
+
+- **EnableCacheRestoreFromBackup**  
+  Enables restoring the metadata cache from a backup copy stored on the destination to protect against cache corruption. 
 
 
 #
