@@ -209,7 +209,8 @@ Below are the places where you can edit the following things:
   
 - **Stale File Deletion from Destination**  
   Enables or disables removal of files from the destination if they’ve been missing from the source for a configurable number of syncs. Default is `NO`.
-  When DeleteStaleFromDest = YES, stale files (those no longer present in the source) are removed from the destination after a set number of runs (StaleEntries).
+
+  When DeleteStaleFromDest = YES, stale files (those no longer present in the source) are removed from the destination after a set number of runs (`StaleEntries`).
   
   **Note:** This process does not delete empty directories that may remain after file deletion. This ensures directory structure integrity is preserved and user is expected to delete the directory.
   ConfigGlobal.cpp `Line 28`
@@ -222,11 +223,20 @@ Below are the places where you can edit the following things:
   Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number.
   FileHasher.hpp `Line 15`
 
+- **File Size Threshold for Small and Large File Queue**
+  Defines the size boundary used to classify files as small or large, determining how they are queued and processed during synchronization.
+  SyncEngine.cpp `Line 19`
+  
 - **Flags for robocopy/dd commands**
   Modify the default flags used by the robocopy/dd commands.
-  FileCopier.hpp `Line 77`,`Line 131` respectively
+  FileCopier.cpp `Line 77`,`Line 131` respectively
+
+- **File Size Threshold for Small and Large File Copy Commands**
+  Defines the size boundary used to classify files as small or large, determining which command is used to copy them.
   
-  
+  **Note:** This setting directly influences how files are processed and which copy strategy is applied. It is intended for advanced users who understand the performance implications of reclassifying file sizes. Changing this may degrade sync performance. Proceed with caution.
+  FileCopier.cpp `Line 63`
+
 
 #
 ### License
