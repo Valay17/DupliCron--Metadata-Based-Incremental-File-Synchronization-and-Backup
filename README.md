@@ -219,19 +219,19 @@ Below are the places where you can edit the following things:
   Sets the maximum number of log files to retain before older logs are purged. Helps manage disk space used by logs. Default is 10.  
   ConfigGlobal.cpp `Line 29`
 
-- **Thread Count for Hasher**
+- **Thread Count for Hasher**  
   Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number.
   FileHasher.hpp `Line 15`
 
-- **File Size Threshold for Small and Large File Queue**
+- **File Size Threshold for Small and Large File Queue**  
   Defines the size boundary used to classify files as small or large, determining how they are queued and processed during synchronization.
   SyncEngine.cpp `Line 19`
   
-- **Flags for robocopy/dd commands**
+- **Flags for robocopy/dd commands**  
   Modify the default flags used by the robocopy/dd commands.
   FileCopier.cpp `Line 77`,`Line 131` respectively
 
-- **File Size Threshold for Small and Large File Copy Commands**
+- **File Size Threshold for Small and Large File Copy Commands**  
   Defines the size boundary used to classify files as small or large, determining which command is used to copy them.
   
   **Note:** This setting directly influences how files are processed and which copy strategy is applied. It is intended for advanced users who understand the performance implications of reclassifying file sizes. Changing this may degrade sync performance. Proceed with caution.
