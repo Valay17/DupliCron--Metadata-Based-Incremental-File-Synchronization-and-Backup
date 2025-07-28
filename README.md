@@ -185,14 +185,17 @@ Below are the places where you can edit the following things:
 
 - **Configuration File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Config.txt`.
+
   ConfigGlobal.cpp `Line 21`
 
 - **Sync Log File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Sync_Logs`.
+
   ConfigGlobal.cpp `Line 22`
 
 - **Metadata Cache File Location**  
   Modify the path and filename used for storing metadata cache files. Default is same directory as the binary and `Meta_Cache`.
+
   ConfigGlobal.cpp `Line 23`
 
 - **Sync Mode and Thread Count**  
@@ -201,10 +204,12 @@ Below are the places where you can edit the following things:
   
 - **Disk Type Optimization**  
   Set the type of disk (HDD or SSD) to optimize copy behavior and avoid disk thrashing. Default is `HDD`.
+
   ConfigGlobal.cpp `Line 26`
   
 - **Stale File Removal Threshold**  
   Set how many consecutive sync runs a file must be missing from the source before it is considered stale [and deleted from the destination (if enabled)]. Default is `5`.
+
   ConfigGlobal.cpp `Line 27`
   
 - **Stale File Deletion from Destination**  
@@ -217,18 +222,22 @@ Below are the places where you can edit the following things:
 
 - **Max Log Files**  
   Sets the maximum number of log files to retain before older logs are purged. Helps manage disk space used by logs. Default is 10.  
+
   ConfigGlobal.cpp `Line 29`
 
 - **Thread Count for Hasher**  
   Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number.
+
   FileHasher.hpp `Line 15`
 
 - **File Size Threshold for Small and Large File Queue**  
   Defines the size boundary used to classify files as small or large, determining how they are queued and processed during synchronization.
+
   SyncEngine.cpp `Line 19`
   
 - **Flags for robocopy/dd commands**  
   Modify the default flags used by the robocopy/dd commands.
+
   FileCopier.cpp `Line 77`,`Line 131` respectively
 
 - **File Size Threshold for Small and Large File Copy Commands**  
