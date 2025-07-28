@@ -78,10 +78,12 @@ FileSync supports backing up a wide range of files and directories, including:
 **Note:**  
 - Only absolute paths are supported for both sources and destinations.
 - Symbolic links are ignored to prevent circular references and unintended copies.
+- Empty directories are not copied.
 - Tool assumes that no failure occurs during the first sync run. A successful initial sync ensures accurate metadata and smooth operation in future runs.
 - Tool does not check for available disk space on the destination before copying. If the destination runs out of space during transfer, the sync will stop and mark pending files as incomplete. Simply rerun the program and it will automatically enter failure recovery mode to continue any pending or partially completed file transfers.
 - If you have very large or deeply nested directory structures, it is recommended to split your sources into separate entries in the config file. This ensures quicker recovery from failures on a per source basis, enables better parallelism, improves isolation of errors, and minimizes the risk of a single failure affecting the entire source's sync process.
 - The tool is designed to operate on any storage medium accessible via a standard file system path including local disks, external drives, mounted network shares (such as SMB/CIFS or NFS), iSCSI volumes, and FUSE mounted systems. Protocol based sources like FTP, SFTP, or HTTP are not natively supported unless mounted into the local file system using 3rd party tools.
+- In case of a system crash, cache integrity is crucial. It is highly recommended to enable the backup cache flag (EnableCacheRestoreFromBackup) so that in the event of corruption, you can restore the cache and avoid full rescans or recopies.
   
 #
 ### Installation
@@ -112,7 +114,9 @@ FileSync uses a simple text based configuration file to control its behavior. Th
 - Stale file removal of files no longer present in the source from the destination
 - Number of runs before stale files are removed from stored cache and destination(if enabled)
 
-**Note:** The order of entries in the config file does not matter. Sources, excludes, and options can appear in any sequence. Refer to Customization below for more info.
+**Note:** 
+- The order of entries in the config file does not matter. Sources, excludes, and options can appear in any sequence. Refer to Customization below for more info.
+- Flags and their Values are Case Sensitive.
 
 ### Acceptable Values for Configuration Flags
 
