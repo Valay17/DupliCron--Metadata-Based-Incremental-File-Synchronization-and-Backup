@@ -170,9 +170,9 @@ FileSync uses a simple text based configuration file to control its behavior.
  
 - **StaleEntries**  
   - How many runs a file must be missing from source before it's marked stale
-  - Default Value is 8
+  - Default Value is 5
 
-- **StaleEntries**  
+- **DeleteStaleFromDest**  
   - Whether to delete stale files from destination
   - This process does not delete empty directories that may remain after file deletion. This ensures directory structure integrity is preserved and user is expected to delete the directory
   - Default Value is NO
@@ -327,6 +327,39 @@ FileSync.exe
 ### Customization Locations in Code
 Below are the places where you can edit the following things:
 
+Values that can be configured via Flags but if you wish to change them to defaults or edit them overall:
+- **Sync Mode and Thread Count**  
+  ConfigGlobal.cpp `Line 24` - Modify the default value the tool runs in. Default is `BG` and `2`.
+  
+- **Disk Type Optimization**  
+  Default is `HDD`.  ConfigGlobal.cpp `Line 26`
+  
+- **Stale File Removal Threshold**  
+  Default is `5`.  ConfigGlobal.cpp `Line 27`
+  
+- **Stale File Deletion from Destination**  
+  Default is `NO`.  ConfigGlobal.cpp `Line 28`
+
+- **Max Log Files**  
+  Default is `10`.  ConfigGlobal.cpp `Line 29`
+
+- **EnableBackupCopyAfterRun**  
+  Default is `YES`.  ConfigGlobal.cpp `Line XX`
+
+- **EnableCacheRestoreFromBackup**  
+  Default is `YES`.  ConfigGlobal.cpp `Line XX`
+
+- **ParallelFilesPerSourceCount**  
+  Default is `8`.  ConfigGlobal.cpp `Line 29`
+  
+- **GodSpeedParallelSourcesCount**  
+  Default is `8`.  ConfigGlobal.cpp `Line 29`
+  
+- **GodSpeedParallelFilesPerSourceCount**  
+  Default is `8`.  ConfigGlobal.cpp `Line 29`
+  
+Hardcoded Values(Change only if you know what you are doing):
+
 - **Configuration File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Config.txt`.
 
@@ -342,35 +375,18 @@ Below are the places where you can edit the following things:
 
   ConfigGlobal.cpp `Line 23`
 
+- **EnableBackupCopyAfterRun**  Backup Dir File Name
+  Modify the path and directory name used for storing metadata cache backup files. Default is same directory as the destination(do not change unless you have a sensible place to store the backup) and `.BackupCache` hidden directory.
+
+  ControlFlow.cpp `Line XX`
+
 - **Sync Mode and Thread Count**  
   ConfigGlobal.cpp `Line 24`,`Line 25` - Modify the default value the tool runs in. Default is `BG` and `2`.
   ConfigParser.cpp `Line 214` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
-  
-- **Disk Type Optimization**  
-  Set the type of disk (HDD or SSD) to optimize copy behavior and avoid disk thrashing. Default is `HDD`.
-
-  ConfigGlobal.cpp `Line 26`
-  
-- **Stale File Removal Threshold**  
-  Set how many consecutive sync runs a file must be missing from the source before it is considered stale [and deleted from the destination (if enabled)]. Default is `5`.
-
-  ConfigGlobal.cpp `Line 27`
-  
-- **Stale File Deletion from Destination**  
-  Enables or disables removal of files from the destination if they’ve been missing from the source for a configurable number of syncs. Default is `NO`.
-
-  When DeleteStaleFromDest = YES, stale files (those no longer present in the source) are removed from the destination after a set number of runs (`StaleEntries`).
-  
-  **Note:** This process does not delete empty directories that may remain after file deletion. This ensures directory structure integrity is preserved and user is expected to delete the directory.
-  ConfigGlobal.cpp `Line 28`
-
-- **Max Log Files**  
-  Sets the maximum number of log files to retain before older logs are purged. Helps manage disk space used by logs. Default is `10`.  
-
-  ConfigGlobal.cpp `Line 29`
+  Note that the thread count defines the number of sources being scanned parallely, this takes minimal time and is thus expected not to be modifed with much. May cause unexpected behavior is exceeding Hardware Max value.
 
 - **Thread Count for Hasher**  
-  Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number. Default is `Hardware Max Supported Thread Count`.
+  Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number. Default is `2`.
 
   FileHasher.hpp `Line 15`
 
@@ -387,36 +403,9 @@ Below are the places where you can edit the following things:
 - **File Size Threshold for Small and Large File Copy Commands**  
   Defines the size boundary used to classify files as small or large, determining which command is used to copy them. Default is `2 GB`.
   
-  **Note:** This setting directly influences how files are processed and which copy strategy is applied. It is intended for advanced users who understand the performance implications of reclassifying file sizes. Changing this may degrade sync performance. Proceed with caution.
+  **Note:** This setting directly influences how files are processed and which copy strategy is applied. Changing this may significantly affect sync performance. Proceed with caution.
   FileCopier.cpp `Line 63`
 
-- **EnableBackupCopyAfterRun**  
-  Creates a backup copy of the metadata cache after each successful run for added integrity protection. Saved as `.BackupCache` hidden directory.
-
-- **EnableCacheRestoreFromBackup**  
-  Enables restoring the metadata cache from a backup copy stored on the destination to protect against cache corruption. 
-
-- **ParallelFilesPerSourceCount**  
-  Controls how many files per source are copied in parallel. Default is `8`.
-
-  Effective only when `SSDMode` is set to `Parallel`.
-
-  ConfigGlobal.cpp `Line 29`
-  
-- **GodSpeedParallelSourcesCount**  
-  Defines how many sources are processed simultaneously. Default is `8`.
-
-  Effective only when `SSDMode` is set to `GodSpeed`.
-
-  ConfigGlobal.cpp `Line 29`
-  
-- **GodSpeedParallelFilesPerSourceCount**  
-  Defines how many files per source are copied in parallel. Default is `8`.
-  
-  Effective only when `SSDMode` is set to `GodSpeed`.
-
-  ConfigGlobal.cpp `Line 29`
-  
 #
 ### License
 
