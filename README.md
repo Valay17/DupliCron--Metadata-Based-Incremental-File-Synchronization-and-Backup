@@ -134,9 +134,62 @@ FileSync uses a simple text based configuration file to control its behavior.
 
 - **Mode**  
   - Controls how aggressively system resources are used
-    - BG
-    - Inter
-    - GodSpeed
+    - BG - Low Load, run as background process so you can continue your work while it syncs
+    - Inter - Medium Load
+    - GodSpeed - Max Performance, run as the primary process maximizing hardware utilization
+  - Default Value is BG
+
+- **DiskType**  
+  - Choose based on your actual hardware for optimal I/O strategy
+    - HDD - Disk Thrashing Disabled, performs sequential writes, reducing seek times
+    - SSD - Disk Thrashing Enabled, performs random writes, maximizing speed
+  - Default Value is HDD
+
+- **SSDMode**  
+  - Only applies when DiskType = `SSD`
+  - Choose SSD-specific copy strategy:
+    - Sequential - Sequential Writes, Suitable for large(size) files
+    - Parallel - Parallel Writes, Suitable for small(size) files
+    - Balanced - Balanced and Optimized Mode, Suitable for mix sized loads
+    - GodSpeed - Maximum Performance, fully parallel, aggressive, and high-load mode
+  - Default Value is Balanced
+  - Refer to Copy Mechanism and SSD Mode Flags below for more info.
+
+- **GodSpeedParallelSourcesCount**  
+  - How many sources copy simultaneously in `GodSpeed` SSDMode
+  - Default Value is 8
+ 
+- **GodSpeedParallelFilesPerSourcesCount**  
+  - How many sources copy simultaneously in `GodSpeed` SSDMode
+  - Default Value is 8
+
+- **ParallelFilesPerSourceCount**  
+  - How many sources copy simultaneously in `Parallel` SSDMode
+  - Default Value is 8
+ 
+- **StaleEntries**  
+  - How many runs a file must be missing from source before it's marked stale
+  - Default Value is 8
+
+- **StaleEntries**  
+  - Whether to delete stale files from destination
+  - This process does not delete empty directories that may remain after file deletion. This ensures directory structure integrity is preserved and user is expected to delete the directory
+  - Default Value is NO
+
+- **EnableBackupCopyAfterRun**  
+  - Choose if a backup of the metadata cache is saved to destination after each successful run for added integrity protection
+  - Saved as `.BackupCache` hidden directory.
+  - Default Value is YES
+
+- **EnableCacheRestoreFromBackup**  
+  - Choose if the metadata cache is restored from backup if original gets corrupted
+  - This runs only when program enters *Failure Mode*.
+  - Default Value is YES
+
+- **MaxLogFiles**  
+  - Max number of logs before older ones are deleted
+  - Default Value is 10
+
 
 ###  Configuration Flags - Acceptable Values
 
@@ -152,8 +205,8 @@ GodSpeedParallelFilesPerSourcesCount = (integer value)
 ParallelFilesPerSourceCount = (integer value)
 StaleEntries = (integer value)
 DeleteStaleFromDest = (YES/NO)
-EnableCacheRestoreFromBackup = (YES/NO)
 EnableBackupCopyAfterRun = (YES/NO)
+EnableCacheRestoreFromBackup = (YES/NO)
 MaxLogFiles = (integer value)
 ```
 
