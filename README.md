@@ -386,7 +386,9 @@ Hardcoded Values(Change only if you know what you are doing):
 
 - **Sync Mode and Thread Count**  
   ConfigGlobal.cpp `Line 37`,`Line 38` - Modify the default value the tool runs in. Default is `BG` and `2`.
+  
   ConfigParser.cpp `Line 307` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
+  
   Note that the thread count defines the number of sources being scanned parallely, this takes minimal time and is thus expected not to be modifed with much. May cause unexpected behavior is exceeding Hardware Max value.
 
 - **Thread Count for Hasher**  
