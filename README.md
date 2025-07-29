@@ -192,6 +192,25 @@ StaleEntries = 2
 **Source and Destination are Mandatory, Rest all are Optional**
 
 #
+### Destination Folder Structure
+The destination folder mirrors the full absolute path of each source directory inside it, rather than dumping source contents directly into the destination root.
+
+For example:
+```
+Source 1: C:/Users/YourName/Desktop
+
+Source 2: C:/Users/YourName/Documents
+
+Destination: D:/Backup
+```
+The resulting structure will be:
+```
+D:/Backup/C/Users/YourName/Desktop
+D:/Backup/C/Users/YourName/Documents
+```
+This approach helps avoid conflicts and overwriting when different sources contain files or folders with the same name. It also preserves the original folder hierarchy, making it easier to locate backed-up files and maintain clear separation between sources.
+
+#
 ### Usage
 Simply run the FileSync executable. It automatically loads the configuration file named `Config.txt` located in the same directory as the binary.
 ```
