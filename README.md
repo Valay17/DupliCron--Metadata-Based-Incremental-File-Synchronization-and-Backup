@@ -88,16 +88,38 @@ FileSync supports backing up a wide range of files and directories, including:
 #
 ### Installation
 
-Prebuilt binaries are provided as `.zip` files for Windows and `.tar.gz` files for Linux in the Releases section. (Architecture `x64`)
+Prebuilt statically linked binaries are provided as `.zip` files for Windows and `.tar.gz` files for Linux in the Releases section. (Architecture `x64`)
 
 #### Building from Source
 
+Requirements:
+CMake 3.13 or higher
+Any C++20 compiler of your choice
+
 Build using CMake:
+
+*Dynamically Linked - Default Build*
 
 ```cmd
 cmake ..
 cmake --build . --config Release
 ```
+
+*Statically Linked - Portable Build*
+
+```cmd
+cmake -DUSE_STATIC_RUNTIME=ON ..
+cmake --build . --config Release
+```
+*Note* for Linux: Even with static linking, the binary still depends on system libraries `libc`(exists on all Linux Distros that are C based). For musl-based or non-glibc systems: CMake doesn’t natively support musl; you need to manually configure the toolchain to build with musl.
+
+*Creating Distributable Archives*
+
+```cmd
+cmake --install . --config Release
+cpack -C Release
+```
+This generates `.zip` archive on Windows, `.tar.gz` archive on Linux. (build or dist directory under the CPack output)
 
 #
 ### Configuration File Info
@@ -249,11 +271,30 @@ Below are the places where you can edit the following things:
 - **EnableBackupCopyAfterRun**  
   Creates a backup copy of the metadata cache after each successful run for added integrity protection. Saved as `.BackupCache` hidden directory.
 
-
 - **EnableCacheRestoreFromBackup**  
   Enables restoring the metadata cache from a backup copy stored on the destination to protect against cache corruption. 
 
+- **ParallelFilesPerSourceCount**  
+  Controls how many files per source are copied in parallel. Default is `8`.
 
+  Effective only when `SSDMode` is set to `Parallel`.
+
+  ConfigGlobal.cpp `Line 29`
+  
+- **GodSpeedParallelSourcesCount**  
+  Defines how many sources are processed simultaneously. Default is `8`.
+
+  Effective only when `SSDMode` is set to `GodSpeed`.
+
+  ConfigGlobal.cpp `Line 29`
+  
+- **GodSpeedParallelFilesPerSourceCount**  
+  Defines how many files per source are copied in parallel. Default is `8`.
+  
+  Effective only when `SSDMode` is set to `GodSpeed`.
+
+  ConfigGlobal.cpp `Line 29`
+  
 #
 ### License
 
