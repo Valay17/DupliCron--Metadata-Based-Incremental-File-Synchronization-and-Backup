@@ -197,11 +197,11 @@ The destination folder mirrors the full absolute path of each source directory i
 
 For example:
 ```
-Source 1: C:/Users/YourName/Desktop
+Source = C:/Users/YourName/Desktop
 
-Source 2: C:/Users/YourName/Documents
+Source = C:/Users/YourName/Documents
 
-Destination: D:/Backup
+Destination = D:/Backup
 ```
 The resulting structure will be:
 ```
