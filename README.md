@@ -389,7 +389,7 @@ Hardcoded Values(Change only if you know what you are doing):
   
   ConfigParser.cpp `Line 307` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
   
-  Note that the thread count defines the number of sources being scanned parallely, this takes minimal time and is thus expected not to be modifed with much. May cause unexpected behavior is exceeding Hardware Max value.
+  **Note:** Thread count defines the number of sources being scanned parallely, this takes minimal time and is thus expected not to be modifed with much. May cause unexpected behavior if exceeding Hardware Max value.
 
 - **Thread Count for Hasher**  
   Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number. Default is `2`.
