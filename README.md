@@ -329,7 +329,7 @@ Below are the places where you can edit the following things:
 
 Values that can be configured via Flags but if you wish to change them to defaults or edit them overall:
 - **Sync Mode and Thread Count**  
-  ConfigGlobal.cpp `Line 24` - Modify the default value the tool runs in. Default is `BG` and `2`.
+  Default is `BG` and `2`. ConfigGlobal.cpp `Line 24`
   
 - **Disk Type Optimization**  
   Default is `HDD`.  ConfigGlobal.cpp `Line 26`
