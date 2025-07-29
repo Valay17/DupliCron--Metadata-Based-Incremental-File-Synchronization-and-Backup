@@ -126,6 +126,7 @@ This generates `.zip` archive on Windows, `.tar.gz` archive on Linux. (build or 
 
 FileSync uses a simple text based configuration file to control its behavior.
 - The order of entries in the config file does not matter. Sources, destination, excludes and flags can appear in any sequence.
+- Spaces are supported, no need for any quotes or escape characters (Both Win and Linux)
 - Flags and their Values are Case Sensitive.
 - Comments are not Supported.
 - Spaces and Empty Lines are ignored.
@@ -194,7 +195,7 @@ FileSync uses a simple text based configuration file to control its behavior.
 ###  Configuration Flags - Acceptable Values
 
 ```
-Source = (Absolute Source Path of file or directory) [Local, UNC, POSIX and Mapped Paths] (Spaces are supported, no need for any quotes or escape characters)
+Source = (Absolute Source Path of file or directory) [Local, UNC, POSIX and Mapped Paths]
 Destination = (Absolute Destination Path)
 Exclude = (Absolute Path of file or directory to be excluded)
 Mode = (BG/Inter/GodSpeed)
