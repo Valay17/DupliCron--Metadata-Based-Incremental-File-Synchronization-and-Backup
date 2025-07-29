@@ -227,10 +227,10 @@ Exclude = D:\Projects\Python
 Mode = BG
 MaxLogFiles = 20
 DiskType = SSD
+StaleEntries = 3
 SSDMode = GodSpeed
 GodSpeedSourceThreadCount = 16
 GodSpeedWorkerThreadCount = 32
-StaleEntries = 3
 DeleteStaleFromDest = YES
 EnableCacheRestoreFromBackup = YES
 EnableBackupCopyAfterRun = YES
@@ -329,66 +329,70 @@ Below are the places where you can edit the following things:
 
 Values that can be configured via Flags but if you wish to change them to defaults or edit them overall:
 - **Sync Mode and Thread Count**  
-  Default is `BG` and `2`. ConfigGlobal.cpp `Line 24`
+  Default is `BG` and `2`. ConfigGlobal.cpp `Line 37` and `Line 38`
   
 - **Disk Type Optimization**  
-  Default is `HDD`.  ConfigGlobal.cpp `Line 26`
+  Default is `HDD`.  ConfigGlobal.cpp `Line 39`
+
+- **SSDMode**  
+  Default is `Balanced`.  ConfigGlobal.cpp `Line 40`
+
+- **GodSpeed Parallel Sources Count**  
+  Default is `8`.  ConfigGlobal.cpp `Line 41`
   
+- **GodSpeed Parallel Files Per Source Count**  
+  Default is `8`.  ConfigGlobal.cpp `Line 42`
+
+- **Parallel Files Per Source Count**  
+  Default is `8`.  ConfigGlobal.cpp `Line 43`
+    
 - **Stale File Removal Threshold**  
-  Default is `5`.  ConfigGlobal.cpp `Line 27`
+  Default is `5`.  ConfigGlobal.cpp `Line 44`
   
 - **Stale File Deletion from Destination**  
-  Default is `NO`.  ConfigGlobal.cpp `Line 28`
-
-- **Max Log Files**  
-  Default is `10`.  ConfigGlobal.cpp `Line 29`
+  Default is `NO`.  ConfigGlobal.cpp `Line 45`
 
 - **EnableBackupCopyAfterRun**  
-  Default is `YES`.  ConfigGlobal.cpp `Line XX`
+  Default is `YES`.  ConfigGlobal.cpp `Line 46`
 
 - **EnableCacheRestoreFromBackup**  
-  Default is `YES`.  ConfigGlobal.cpp `Line XX`
+  Default is `YES`.  ConfigGlobal.cpp `Line 47`
 
-- **ParallelFilesPerSourceCount**  
-  Default is `8`.  ConfigGlobal.cpp `Line 29`
-  
-- **GodSpeedParallelSourcesCount**  
-  Default is `8`.  ConfigGlobal.cpp `Line 29`
-  
-- **GodSpeedParallelFilesPerSourceCount**  
-  Default is `8`.  ConfigGlobal.cpp `Line 29`
+- **Max Log Files**  
+  Default is `10`.  ConfigGlobal.cpp `Line 48`
+
   
 Hardcoded Values(Change only if you know what you are doing):
 
 - **Configuration File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Config.txt`.
 
-  ConfigGlobal.cpp `Line 21`
+  ConfigGlobal.cpp `Line 33`
 
 - **Sync Log File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Sync_Logs`.
 
-  ConfigGlobal.cpp `Line 22`
+  ConfigGlobal.cpp `Line 34`
 
 - **Metadata Cache File Location**  
   Modify the path and filename used for storing metadata cache files. Default is same directory as the binary and `Meta_Cache`.
 
-  ConfigGlobal.cpp `Line 23`
+  ConfigGlobal.cpp `Line 35`
 
 - **EnableBackupCopyAfterRun**  Backup Dir File Name
   Modify the path and directory name used for storing metadata cache backup files. Default is same directory as the destination(do not change unless you have a sensible place to store the backup) and `.BackupCache` hidden directory.
 
-  ControlFlow.cpp `Line XX`
+  ControlFlow.cpp `Line 151`
 
 - **Sync Mode and Thread Count**  
-  ConfigGlobal.cpp `Line 24`,`Line 25` - Modify the default value the tool runs in. Default is `BG` and `2`.
-  ConfigParser.cpp `Line 214` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
+  ConfigGlobal.cpp `Line 37`,`Line 38` - Modify the default value the tool runs in. Default is `BG` and `2`.
+  ConfigParser.cpp `Line 307` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
   Note that the thread count defines the number of sources being scanned parallely, this takes minimal time and is thus expected not to be modifed with much. May cause unexpected behavior is exceeding Hardware Max value.
 
 - **Thread Count for Hasher**  
   Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number. Default is `2`.
 
-  FileHasher.hpp `Line 15`
+  FileHasher.hpp `Line 18`, `Line 20`. Replace `ConfigGlobal::ThreadCount` with desired value(Change the Log `Line 14` a well if you update).
 
 - **File Size Threshold for Small and Large File Queue**  
   Defines the size boundary used to classify files as small or large, determining how they are queued and processed during synchronization. Default is `2 GB`.
@@ -396,9 +400,9 @@ Hardcoded Values(Change only if you know what you are doing):
   SyncEngine.cpp `Line 19`
   
 - **Flags for robocopy/dd commands**  
-  Modify the default flags used by the robocopy/dd commands.
-
-  FileCopier.cpp `Line 77`,`Line 131` respectively
+  Modify the default flags used by the robocopy/dd commands. Defaults are `/R:2 /W:5 /NFL /NDL /NJH` and `bs=4M status=progress conv=fsync` respectively.
+  
+  FileCopier.cpp `Line 87`,`Line 143` respectively
 
 - **File Size Threshold for Small and Large File Copy Commands**  
   Defines the size boundary used to classify files as small or large, determining which command is used to copy them. Default is `2 GB`.
