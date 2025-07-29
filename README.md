@@ -379,7 +379,7 @@ Hardcoded Values(Change only if you know what you are doing):
 
   ConfigGlobal.cpp `Line 35`
 
-- **EnableBackupCopyAfterRun**  Backup Dir File Name
+- **Backup Directory File Name**  
   Modify the path and directory name used for storing metadata cache backup files. Default is same directory as the destination(do not change unless you have a sensible place to store the backup) and `.BackupCache` hidden directory.
 
   ControlFlow.cpp `Line 151`
