@@ -198,7 +198,7 @@ Source = (Absolute Source Path of file or directory) [Local, UNC, POSIX and Mapp
 Destination = (Absolute Destination Path)
 Exclude = (Absolute Path of file or directory to be excluded)
 Mode = (BG/Inter/GodSpeed)
-DiskType = (SSD/HDD) (HDD for no copy thrashing [sequential writes per source], SSD for copy thrashing [parallel writes multiple sources])
+DiskType = (SSD/HDD)
 SSDMode = (GodSpeed/Parallel/Sequential/Balanced)
 GodSpeedParallelSourcesCount = (integer value)
 GodSpeedParallelFilesPerSourcesCount = (integer value)
@@ -223,11 +223,16 @@ Destination = D:\Backup
 Exclude = C:\Users\YourName\Documents\help.txt
 Exclude = D:\Projects\Python
 
-Mode = Inter
-MaxLogFiles = 5
-DiskType = HDD
-DeleteStaleFromDest = NO
-StaleEntries = 10
+Mode = BG
+MaxLogFiles = 20
+DiskType = SSD
+SSDMode = GodSpeed
+GodSpeedSourceThreadCount = 16
+GodSpeedWorkerThreadCount = 32
+StaleEntries = 3
+DeleteStaleFromDest = YES
+EnableCacheRestoreFromBackup = YES
+EnableBackupCopyAfterRun = YES
 
 ```
 Linux
@@ -241,12 +246,17 @@ Destination = /mnt/backup
 
 Exclude = /mnt/c/users/YourName/Documents/help.txt
 
-Mode = GodSpeed
-MaxLogFiles = 10
+Mode = BG
+MaxLogFiles = 100
 DiskType = SSD
-DeleteStaleFromDest = YES
-StaleEntries = 2
+SSDMode = Parallel
+SourceThreadCount = 2
+StaleEntries = 10
+DeleteStaleFromDest = NO
+EnableCacheRestoreFromBackup = NO
+EnableBackupCopyAfterRun = NO
 ```
+
 **Source and Destination are Mandatory, Rest all are Optional**
 
 #
