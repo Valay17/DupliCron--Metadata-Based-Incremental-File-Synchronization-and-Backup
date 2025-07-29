@@ -211,6 +211,40 @@ D:/Backup/C/Users/YourName/Documents
 This approach helps avoid conflicts and overwriting when different sources contain files or folders with the same name. It also preserves the original folder hierarchy, making it easier to locate backed-up files and maintain clear separation between sources.
 
 #
+### Copy Mechanism and SSD Mode Flags
+FileSync’s copy modes under SSDMode only work when DiskType is set to SSD. If DiskType is set to HDD, these modes are ignored.
+
+*Note:* You can technically use any SSDMode with any disk type (HDD/SSD). But the behavior and performance were optimized with SSDs in mind. If you're unsure — stick to the defaults.
+
+- **Sequential**  
+  - Source-Level: Only one source is copied at a time.
+  - File-Level: Files are copied one-by-one, sequentially.
+  - Use this if your sources mostly contain very large files. It maximizes per-file bandwidth and reduces I/O contention, which speeds up transfers and avoids unnecessary overhead.
+  - Example: Backing up videos, ISO files, archives etc.
+
+- **Parallel**  
+  - Source-Level: Only one source is copied at a time.
+  - File-Level: Files within the source copied in parallel.
+  - Use this if your sources mostly contain a large number of small files. Copying them in parallel improves I/O throughput by keeping the pipeline full.
+  - Example: Backing up a photo collection, logs, documents, source code folders, etc.
+ 
+- **Balanced**  
+  - Source-Level: One source at a time, but starts processing the next source’s small/large files if the current one still has large/small files being copied.
+  - File-Level: Files within the source copied in parallel.
+  - Use this if your sources mostly contain a large number of small files. Copying them in parallel improves I/O throughput by keeping the pipeline full.
+  - This is the recommended and default mode. It’s designed for mixed workloads — where some sources contain large files, others small. It maximizes disk usage and ensures high throughput.
+  - Example: General-purpose backups with a mix of documents, videos, installers, etc.
+ 
+- **GodSpeed**  
+  - Source-Level: All sources are processed in parallel
+  - File-Level: Files within each source are also copied in parallel
+  - Unlike Parallel Mode, which processes one source at a time, Godspeed handles multiple sources and their internal files simultaneously. It pushes the system to full throughput limits.
+  - This is the most aggressive mode — multiple sources and multiple files from each source are copied all at once. It’s very fast, but can consume a lot of system resources.
+  - Performance depends based on the hardware and the nature of files, so you may need to optimize this to get the best results(using the Flags for `GodSpeedParallelSourcesCount` & `GodSpeedParallelFilesPerSourceCount`).
+  - Use if speed is prioritized over system load and you are willing to optimize it, otherwise use balanced mode. Difference might be significant only if optimized, this mode may actually perform worse than Balanced due to resource contention.
+    
+
+#
 ### Usage
 Simply run the FileSync executable. It automatically loads the configuration file named `Config.txt` located in the same directory as the binary.
 ```
