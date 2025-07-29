@@ -124,32 +124,36 @@ This generates `.zip` archive on Windows, `.tar.gz` archive on Linux. (build or 
 #
 ### Configuration File Info
 
-
-FileSync uses a simple text based configuration file to control its behavior. The config file supports defining:
-
-- Source directories (absolute paths only) (can be files and/or directories, both supported)
-- Destination directory (absolute path)
-- File and folder exclusions by name (absolute path only)
-- Sync mode for defining threadcount and resource utilization
-- Maximum number of log files to retain
-- Disk type for copy thrashing prevention
-- Stale file removal of files no longer present in the source from the destination
-- Number of runs before stale files are removed from stored cache and destination(if enabled)
-
-**Note:** 
-- The order of entries in the config file does not matter. Sources, excludes, and flags can appear in any sequence. Refer to Customization below for more info.
+FileSync uses a simple text based configuration file to control its behavior.
+- The order of entries in the config file does not matter. Sources, destination, excludes and flags can appear in any sequence.
 - Flags and their Values are Case Sensitive.
+- Comments are not Supported.
+- Spaces and Empty Lines are ignored.
 
-### Acceptable Values for Configuration Flags
+###  Configuration Flags - Definition and Usage
+
+- **Mode**  
+  - Controls how aggressively system resources are used
+    - BG
+    - Inter
+    - GodSpeed
+
+###  Configuration Flags - Acceptable Values
 
 ```
-Source = (Absolute Source Path of file or directory) [Local, UNC, POSIX and Mapped Paths]
+Source = (Absolute Source Path of file or directory) [Local, UNC, POSIX and Mapped Paths] (Spaces are supported, no need for any quotes or escape characters)
 Destination = (Absolute Destination Path)
 Exclude = (Absolute Path of file or directory to be excluded)
 Mode = (BG/Inter/GodSpeed)
 DiskType = (SSD/HDD) (HDD for no copy thrashing [sequential writes per source], SSD for copy thrashing [parallel writes multiple sources])
+SSDMode = (GodSpeed/Parallel/Sequential/Balanced)
+GodSpeedParallelSourcesCount = (integer value)
+GodSpeedParallelFilesPerSourcesCount = (integer value)
+ParallelFilesPerSourceCount = (integer value)
 StaleEntries = (integer value)
 DeleteStaleFromDest = (YES/NO)
+EnableCacheRestoreFromBackup = (YES/NO)
+EnableBackupCopyAfterRun = (YES/NO)
 MaxLogFiles = (integer value)
 ```
 
@@ -158,6 +162,7 @@ Windows
 ```
 Source = C:\Users\YourName\Documents
 Source = C:\Users\YourName\Desktop\To-Do.txt
+Source = C:\My Data\Some Random Name
 Source = D:\Projects
 
 Destination = D:\Backup
