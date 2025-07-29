@@ -93,10 +93,10 @@ Prebuilt statically linked binaries are provided as `.zip` files for Windows and
 #### Building from Source
 
 Requirements:
-CMake 3.13 or higher
-Any C++20 compiler of your choice
+- CMake 3.13 or higher
+- Any C++20 compiler supported by CMake
 
-Build using CMake:
+#### Build using CMake:
 
 *Dynamically Linked - Default Build*
 
@@ -111,7 +111,7 @@ cmake --build . --config Release
 cmake -DUSE_STATIC_RUNTIME=ON ..
 cmake --build . --config Release
 ```
-*Note* for Linux: Even with static linking, the binary still depends on system libraries `libc`(exists on all Linux Distros that are C based). For musl-based or non-glibc systems: CMake doesn’t natively support musl; you need to manually configure the toolchain to build with musl.
+*Note* for Linux: Even with static linking, the binary still depends on system library `libc`(exists on all Linux Distros that are C based). For musl-based or non-glibc systems: CMake doesn’t natively support musl; you need to manually configure the toolchain to build with musl.
 
 *Creating Distributable Archives*
 
