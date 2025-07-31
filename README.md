@@ -187,6 +187,11 @@ FileSync uses a simple text based configuration file to control its behavior.
   - This runs only when program enters *Failure Mode*.
   - Default Value is YES
 
+- **DestinationTopFolderInsteadOfFullPath**  
+  - Controls whether the destination folder structure uses only the top-level source folder name instead of the full source path.
+  - Check the Destination Folder Structure for more info.
+  - Default Value is NO
+
 - **MaxLogFiles**  
   - Max number of logs before older ones are deleted
   - Default Value is 10
@@ -208,6 +213,7 @@ StaleEntries = (integer value)
 DeleteStaleFromDest = (YES/NO)
 EnableBackupCopyAfterRun = (YES/NO)
 EnableCacheRestoreFromBackup = (YES/NO)
+DestinationTopFolderInsteadOfFullPath = (YES/NO)
 MaxLogFiles = (integer value)
 ```
 
@@ -234,6 +240,7 @@ GodSpeedWorkerThreadCount = 32
 DeleteStaleFromDest = YES
 EnableCacheRestoreFromBackup = YES
 EnableBackupCopyAfterRun = YES
+DestinationTopFolderInsteadOfFullPath = YES
 
 ```
 Linux
@@ -262,7 +269,7 @@ EnableBackupCopyAfterRun = NO
 
 #
 ### Destination Folder Structure
-The destination folder mirrors the full absolute path of each source directory inside it, rather than dumping source contents directly into the destination root.
+The destination folder mirrors the full absolute path of each source directory inside it, rather than dumping source contents directly into the destination root. - **Default Behavior**
 
 For example:
 ```
@@ -278,6 +285,20 @@ D:/Backup/C/Users/YourName/Desktop
 D:/Backup/C/Users/YourName/Documents
 ```
 This approach helps avoid conflicts and overwriting when different sources contain files or folders with the same name. It also preserves the original folder hierarchy, making it easier to locate backed-up files and maintain clear separation between sources.
+
+**Alternate Destination Structure**
+
+If the configuration flag `DestinationTopFolderInsteadOfFullPath` is set to `YES`, the tool will use only the top-level folder name or filename from each source when creating the destination folder structure.
+
+The resulting structure will be:
+```
+D:/Backup/Desktop
+D:/Backup/Documents
+D:/Backup/File.txt
+```
+A collision detection mechanism scans all source paths before sync begins. If multiple sources would create the same top-level folder or file in the destination, the sync is aborted immediately. This prevents overwrites or conflicts.
+
+The tool only checks for top level folder/file name collisions among the sources listed in the current configuration file. It does not check against folders or files that were created in previous runs and already exist in the destination, it only checks the ones present in the current config file. This means adding new sources that share names with existing destination folders can cause overwriting. To avoid this, use the default full path structure, which preserves each source’s full path inside the destination or manually verify there are no naming conflicts before syncing.
 
 #
 ### Copy Mechanism and SSD Mode Flags
@@ -329,37 +350,40 @@ Below are the places where you can edit the following things:
 
 Values that can be configured via Flags but if you wish to change them to defaults or edit them overall:
 - **Sync Mode and Thread Count**  
-  Default is `BG` and `2`. ConfigGlobal.cpp `Line 37` and `Line 38`
+  Default is `BG` and `2`. ConfigGlobal.cpp `Line 38` and `Line 39`
   
 - **Disk Type Optimization**  
-  Default is `HDD`.  ConfigGlobal.cpp `Line 39`
+  Default is `HDD`.  ConfigGlobal.cpp `Line 40`
 
 - **SSDMode**  
-  Default is `Balanced`.  ConfigGlobal.cpp `Line 40`
+  Default is `Balanced`.  ConfigGlobal.cpp `Line 41`
 
 - **GodSpeed Parallel Sources Count**  
-  Default is `8`.  ConfigGlobal.cpp `Line 41`
+  Default is `8`.  ConfigGlobal.cpp `Line 42`
   
 - **GodSpeed Parallel Files Per Source Count**  
-  Default is `8`.  ConfigGlobal.cpp `Line 42`
+  Default is `8`.  ConfigGlobal.cpp `Line 43`
 
 - **Parallel Files Per Source Count**  
-  Default is `8`.  ConfigGlobal.cpp `Line 43`
+  Default is `8`.  ConfigGlobal.cpp `Line 44`
     
 - **Stale File Removal Threshold**  
-  Default is `5`.  ConfigGlobal.cpp `Line 44`
+  Default is `5`.  ConfigGlobal.cpp `Line 45`
   
 - **Stale File Deletion from Destination**  
-  Default is `NO`.  ConfigGlobal.cpp `Line 45`
+  Default is `NO`.  ConfigGlobal.cpp `Line 46`
 
 - **EnableBackupCopyAfterRun**  
-  Default is `YES`.  ConfigGlobal.cpp `Line 46`
-
-- **EnableCacheRestoreFromBackup**  
   Default is `YES`.  ConfigGlobal.cpp `Line 47`
 
+- **EnableCacheRestoreFromBackup**  
+  Default is `YES`.  ConfigGlobal.cpp `Line 48`
+
+- **DestinationTopFolderInsteadOfFullPath**  
+  Default is `NO`.  ConfigGlobal.cpp `Line 49`
+
 - **Max Log Files**  
-  Default is `10`.  ConfigGlobal.cpp `Line 48`
+  Default is `10`.  ConfigGlobal.cpp `Line 50`
 
   
 Hardcoded Values(Change only if you know what you are doing):
