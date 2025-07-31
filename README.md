@@ -286,7 +286,7 @@ D:/Backup/C/Users/YourName/Documents
 ```
 This approach helps avoid conflicts and overwriting when different sources contain files or folders with the same name. It also preserves the original folder hierarchy, making it easier to locate backed-up files and maintain clear separation between sources.
 
-**Alternate Destination Structure**
+#### Alternate Destination Structure
 
 If the configuration flag `DestinationTopFolderInsteadOfFullPath` is set to `YES`, the tool will use only the top-level folder name or filename from each source when creating the destination folder structure.
 
@@ -298,7 +298,7 @@ D:/Backup/File.txt
 ```
 A collision detection mechanism scans all source paths before sync begins. If multiple sources would create the same top-level folder or file in the destination, the sync is aborted immediately. This prevents overwrites or conflicts.
 
-The tool only checks for top level folder/file name collisions among the sources listed in the current configuration file. It does not check against folders or files that were created in previous runs and already exist in the destination, it only checks the ones present in the current config file. This means adding new sources that share names with existing destination folders can cause overwriting. To avoid this, use the default full path structure, which preserves each source’s full path inside the destination or manually verify there are no naming conflicts before syncing.
+**Note:** The tool only checks for top level folder/file name collisions among the sources listed in the current configuration file. It does not check against folders or files that were created in previous runs and already exist in the destination, it only checks the ones present in the current config file. This means adding new sources that share names with existing destination folders can cause overwriting. To avoid this, use the default full path structure, which preserves each source’s full path inside the destination or manually verify there are no naming conflicts before syncing.
 
 #
 ### Copy Mechanism and SSD Mode Flags
