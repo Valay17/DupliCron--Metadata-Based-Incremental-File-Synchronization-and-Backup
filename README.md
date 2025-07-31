@@ -406,12 +406,12 @@ Hardcoded Values(Change only if you know what you are doing):
 - **Backup Directory File Name**  
   Modify the path and directory name used for storing metadata cache backup files. Default is same directory as the destination(do not change unless you have a sensible place to store the backup) and `.BackupCache` hidden directory.
 
-  ControlFlow.cpp `Line 151`
+  ControlFlow.cpp `Line 158`
 
 - **Sync Mode and Thread Count**  
   ConfigGlobal.cpp `Line 38`,`Line 39` - Modify the default value the tool runs in. Default is `BG` and `2`.
   
-  ConfigParser.cpp `Line 307` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
+  ConfigParser.cpp `Line 230` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
   
   **Note:** Thread count defines the number of sources being scanned parallely, this takes minimal time and is thus expected not to be modifed with much. May cause unexpected behavior if exceeding Hardware Max value.
 
@@ -428,7 +428,7 @@ Hardcoded Values(Change only if you know what you are doing):
 - **Flags for robocopy/dd commands**  
   Modify the default flags used by the robocopy/dd commands. Defaults are `/R:2 /W:5 /NFL /NDL /NJH` and `bs=4M status=progress conv=fsync` respectively.
   
-  FileCopier.cpp `Line 87`,`Line 143` respectively
+  FileCopier.cpp `Line 108`,`Line 164` respectively
 
 - **File Size Threshold for Small and Large File Copy Commands**  
   Defines the size boundary used to classify files as small or large, determining which command is used to copy them. Default is `2 GB`.
