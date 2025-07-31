@@ -3,11 +3,11 @@
 <h1> <p>DupliCron - Metadata Based Incremental File Backup</p> </h1>
 </div>
 
-FileSync is a fast and highly configurable file synchronization utility for local and external backups, available on both Windows and Linux. It supports multiple source directories and uses a metadata-based incremental sync approach to avoid redundant copying. File changes are detected using a combination of file size and modification time, which are hashed and stored in a binary cache to ensure accurate and efficient updates across runs.
+DupliCron is a fast and highly configurable file synchronization utility for local and external backups, available on both Windows and Linux. It supports multiple source directories and uses a metadata-based incremental sync approach to avoid redundant copying. File changes are detected using a combination of file size and modification time, which are hashed and stored in a binary cache to ensure accurate and efficient updates across runs.
 
-Built in modern C++, the tool leverages multithreaded scanning and hashing to accelerate sync decisions across large directories. A dedicated copy manager serializes I/O operations per source to prevent disk contention and ensure stable performance. FileSync includes robust failure tracking: unsuccessful copy operations are detected and logged, and metadata is updated post-copy to reflect actual copy status, allowing precise reporting and recovery on future syncs. This makes it particularly well-suited for repeated backups, local mirroring, and any scenario requiring reliable, high-throughput file synchronization with built-in integrity tracking.
+Built in modern C++, the tool leverages multithreaded scanning and hashing to accelerate sync decisions across large directories. A dedicated copy manager serializes I/O operations per source to prevent disk contention and ensure stable performance. DupliCron includes robust failure tracking: unsuccessful copy operations are detected and logged, and metadata is updated post-copy to reflect actual copy status, allowing precise reporting and recovery on future syncs. This makes it particularly well-suited for repeated backups, local mirroring, and any scenario requiring reliable, high-throughput file synchronization with built-in integrity tracking.
 
-**Note:** FileSync scans only the configured source directories during synchronization. It does not perform a full scan or analysis of the destination directory’s contents, although it does verify the existence of destination folders and files as needed during the copy process. Updated files are overwritten in the destination along with their metadata. Files deleted from the source can be removed from the destination after a configurable number of sync runs, enabling automatic cleanup of stale files. This behavior is controlled by a configurable flag in the config file, providing flexibility between non-destructive and fully synchronized modes.
+**Note:** DupliCron scans only the configured source directories during synchronization. It does not perform a full scan or analysis of the destination directory’s contents, although it does verify the existence of destination folders and files as needed during the copy process. Updated files are overwritten in the destination along with their metadata. Files deleted from the source can be removed from the destination after a configurable number of sync runs, enabling automatic cleanup of stale files. This behavior is controlled by a configurable flag in the config file, providing flexibility between non-destructive and fully synchronized modes.
 
 #
 ### Features
@@ -31,7 +31,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
   Directories are scanned and files are hashed in parallel using a custom thread pool. This significantly improves performance on large directories while preserving system responsiveness through controlled concurrency.
 
 - **Config File Driven Operation**  
-  All behavior of FileSync is controlled via a simple, text based configuration file. This file defines source/destination paths, exclusions, sync mode, logging, stale file handling, and other advanced flags. Users can fully customize how the sync operates by modifying the config file.
+  All behavior of DupliCron is controlled via a simple, text based configuration file. This file defines source/destination paths, exclusions, sync mode, logging, stale file handling, and other advanced flags. Users can fully customize how the sync operates by modifying the config file.
 
 - **Thread Safe Copy Manager**  
   A dedicated I/O thread handles copy execution by dequeuing per source copy queues, ensuring one at a time copy per source for consistent disk behavior.
@@ -68,7 +68,7 @@ Built in modern C++, the tool leverages multithreaded scanning and hashing to ac
 #
 ### What Can I Back Up?
 
-FileSync supports backing up a wide range of files and directories, including:
+DupliCron supports backing up a wide range of files and directories, including:
 
 - Regular files of any type, such as documents, images, videos, and executables.
 - Hidden files and folders (e.g., dotfiles and dotfolders on Linux like `.bashrc`, and hidden files/folders on Windows like `desktop.ini` or hidden system folders).
@@ -124,7 +124,7 @@ This generates `.zip` archive on Windows, `.tar.gz` archive on Linux. (build or 
 #
 ### Configuration File Info
 
-FileSync uses a simple text based configuration file to control its behavior.
+DupliCron uses a simple text based configuration file to control its behavior.
 - The order of entries in the config file does not matter. Sources, destination, excludes and flags can appear in any sequence.
 - Spaces in Paths are supported, no need for any quotes or escape characters (Both Win and Linux).
 - Flags and their Values are Case Sensitive.
@@ -302,7 +302,7 @@ A collision detection mechanism scans all source paths before sync begins. If mu
 
 #
 ### Copy Mechanism and SSD Mode Flags
-FileSync’s copy modes under SSDMode only work when DiskType is set to SSD. If DiskType is set to HDD, these modes are ignored.
+DupliCron’s copy modes under SSDMode only work when DiskType is set to SSD. If DiskType is set to HDD, these modes are ignored.
 
 *Note:* You can technically use any SSDMode with any disk type (HDD/SSD). But the behavior and performance were optimized with SSDs in mind. If you're unsure — stick to the defaults.
 
@@ -336,12 +336,12 @@ FileSync’s copy modes under SSDMode only work when DiskType is set to SSD. If 
 
 #
 ### Usage
-Simply run the FileSync executable. It automatically loads the configuration file named `Config.txt` located in the same directory as the binary.
+Simply run the DupliCron executable. It automatically loads the configuration file named `Config.txt` located in the same directory as the binary.
 ```
-FileSync.exe
+DupliCron.exe
 ```
 ```
-./FileSync
+./DupliCron
 ```
 
 #
