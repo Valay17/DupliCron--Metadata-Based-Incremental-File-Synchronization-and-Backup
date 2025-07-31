@@ -418,7 +418,7 @@ Hardcoded Values(Change only if you know what you are doing):
 - **Thread Count for Hasher**  
   Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number. Default is `2`.
 
-  FileHasher.hpp `Line 18`, `Line 20`. Replace `ConfigGlobal::ThreadCount` with desired value(Change the Log `Line 14` a well if you update).
+  FileHasher.hpp `Line 18`, `Line 20`. Replace `ConfigGlobal::ThreadCount` with desired value(Change the Log `Line 14` as well if you update).
 
 - **File Size Threshold for Small and Large File Queue**  
   Defines the size boundary used to classify files as small or large, determining how they are queued and processed during synchronization. Default is `2 GB`.
