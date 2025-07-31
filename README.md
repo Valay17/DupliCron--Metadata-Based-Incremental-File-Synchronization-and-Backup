@@ -434,6 +434,7 @@ Hardcoded Values(Change only if you know what you are doing):
   Defines the size boundary used to classify files as small or large, determining which command is used to copy them. Default is `2 GB`.
   
   **Note:** This setting directly influences how files are processed and which copy strategy is applied. Changing this may significantly affect sync performance. Proceed with caution.
+  
   FileCopier.cpp `Line 63`
 
 #
