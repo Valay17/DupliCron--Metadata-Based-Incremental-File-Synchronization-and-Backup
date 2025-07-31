@@ -1,0 +1,143 @@
+#include <iostream>
+#include <filesystem>
+#include <stack>
+
+#include "FileScanner.hpp"
+#include "TimeUtils.hpp"
+#include "Logger.hpp"
+
+namespace FS = std::filesystem;
+
+const std::vector<ScannedFileInfo>& FileScanner::GetFiles() const
+{
+    return Files;
+}
+
+void FileScanner::Clear()
+{
+    Files.clear();
+}
+
+void FileScanner::SetExcludes(const std::vector<std::string>& ExcludePaths)
+{
+    Excludes = ExcludePaths;
+}
+
+bool FileScanner::IsExcluded(const FS::path& Path) const
+{
+    const std::string Abs = FS::absolute(Path).string();
+    for (const auto& Exclude : Excludes)
+    {
+        if (Abs == Exclude)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void FileScanner::Scan(const std::string& RootPath)
+{
+    FS::path Root(RootPath);
+    try
+    {
+        if (!FS::exists(Root))
+        {
+            std::cerr << "Scan Error: Path does not exist: " << Root.string() << "\n";
+            Log.Error("Scan: Path does not exist: " + Root.string());
+            return;
+        }
+        if (IsExcluded(Root))
+        {
+            std::cerr << "Skipping excluded root path: " << Root.string() << "\n";
+            Log.Error("Skipping excluded root path : " + Root.string());
+            return;
+        }
+        if (FS::is_regular_file(Root)) // Single file case
+        {
+            ScannedFileInfo Info;
+            Info.RelativePath = Root.string(); // Just the filename for single file
+            Info.Size = FS::file_size(Root);
+            Info.MTime = ToTimeT(FS::last_write_time(Root));
+            Files.push_back(std::move(Info));
+            return;
+        }
+        if (!FS::is_directory(Root))
+        {
+            std::cerr << "Scan Error: Path is neither a directory nor a file: " << Root.string() << "\n";
+            Log.Error("Scan Error: Path is neither a directory nor a file: " + Root.string());
+            return;
+        }
+        // Directory case
+        ScanDirectoryIterative(Root);
+    }
+    catch (const FS::filesystem_error& e)
+    {
+        std::cerr << "Filesystem error during scan: " << e.what() << "\n";
+        Log.Error(std::string("Filesystem error during scan: ") + e.what());
+        std::cerr << "Path: " << e.path1() << "\n";
+        Log.Error(std::string("Path: ") + e.path1().string());
+    }
+}
+
+void FileScanner::ScanDirectoryIterative(const FS::path& Root)
+{
+    std::stack<FS::path> DirStack;
+    DirStack.push(Root);
+    while (!DirStack.empty())
+    {
+        FS::path Current = DirStack.top();
+        DirStack.pop();
+
+        if (IsExcluded(Current))
+        {
+            std::cerr << "Skipping Excluded Directory: " << Current << "\n";
+            Log.Info(std::string("Skipping Excluded Directory: ") + Current.string());
+            continue;
+        }
+        try
+        {
+            for (const auto& Entry : FS::directory_iterator(Current))
+            {
+                try
+                {
+                    const auto& AbsPath = Entry.path();
+                    // Skip symbolic links to avoid loops or unsupported files.
+                    if (FS::is_symlink(Entry.symlink_status()))
+                    {
+                        Log.Info(std::string("Skipping SymLink: ") + AbsPath.string());
+                        continue;
+                    }
+                    if (IsExcluded(AbsPath))
+                    {
+                        std::cerr << "Skipping Excluded Path: " << AbsPath << "\n";
+                        Log.Info(std::string("Skipping Excluded Path: ") + AbsPath.string());
+                        continue;
+                    }
+                    if (Entry.is_directory())
+                    {
+                        DirStack.push(AbsPath);
+                    }
+                    else if (Entry.is_regular_file())
+                    {
+                        ScannedFileInfo Info;
+                        Info.RelativePath = AbsPath.string();
+                        Info.Size = Entry.file_size();
+                        Info.MTime = ToTimeT(Entry.last_write_time());
+                        Files.push_back(std::move(Info));
+                    }
+                }
+                catch (const FS::filesystem_error& e)
+                {
+                    std::cerr << "Filesystem error accessing entry: " << e.what() << " Path: " << Entry.path() << "\n";
+                    Log.Error(std::string("Filesystem error accessing entry: ") + e.what() + std::string(" Path: ") + Entry.path().string());
+                }
+            }
+        }
+        catch (const FS::filesystem_error& e)
+        {
+            std::cerr << "Filesystem error iterating directory: " << e.what() << " Path: " << Current << "\n";
+            Log.Error(std::string("Filesystem error iterating directory: ") + e.what() + std::string(" Path: ") + Current.string());
+        }
+    }
+}

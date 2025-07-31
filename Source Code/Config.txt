@@ -1,0 +1,20 @@
+Source = Full Paths, can be file or folder
+Source = Add more as required
+
+Exclude = Full Paths, can be file or folder
+Exclude = Add more as required
+
+Destination = Full Paths, folder - only 1 allowed
+
+Mode = BG/Inter/GodSpeed
+DiskType = SSD/HDD
+SSDMode = GodSpeed/Parallel/Sequential/Balanced
+GodSpeedParallelSourcesCount = integer value
+GodSpeedParallelFilesPerSourcesCount = integer value
+ParallelFilesPerSourceCount = integer value
+StaleEntries = integer value
+DeleteStaleFromDest = YES/NO
+EnableBackupCopyAfterRun = YES/NO
+EnableCacheRestoreFromBackup = YES/NO
+DestinationTopFolderInsteadOfFullPath = YES/NO
+MaxLogFiles = integer value
