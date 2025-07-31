@@ -391,17 +391,17 @@ Hardcoded Values(Change only if you know what you are doing):
 - **Configuration File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Config.txt`.
 
-  ConfigGlobal.cpp `Line 33`
+  ConfigGlobal.cpp `Line 34`
 
 - **Sync Log File Location**  
   Modify the path and filename used for storing log files. Default is same directory as the binary and `Sync_Logs`.
 
-  ConfigGlobal.cpp `Line 34`
+  ConfigGlobal.cpp `Line 35`
 
 - **Metadata Cache File Location**  
   Modify the path and filename used for storing metadata cache files. Default is same directory as the binary and `Meta_Cache`.
 
-  ConfigGlobal.cpp `Line 35`
+  ConfigGlobal.cpp `Line 36`
 
 - **Backup Directory File Name**  
   Modify the path and directory name used for storing metadata cache backup files. Default is same directory as the destination(do not change unless you have a sensible place to store the backup) and `.BackupCache` hidden directory.
@@ -409,7 +409,7 @@ Hardcoded Values(Change only if you know what you are doing):
   ControlFlow.cpp `Line 151`
 
 - **Sync Mode and Thread Count**  
-  ConfigGlobal.cpp `Line 37`,`Line 38` - Modify the default value the tool runs in. Default is `BG` and `2`.
+  ConfigGlobal.cpp `Line 38`,`Line 39` - Modify the default value the tool runs in. Default is `BG` and `2`.
   
   ConfigParser.cpp `Line 307` - Modify the number of threads defined for BG, Inter and GodSpeed. Defaults are 2, 4 and Hardware Max Supported Thread Count.
   
