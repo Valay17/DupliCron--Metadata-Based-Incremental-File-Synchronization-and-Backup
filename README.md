@@ -116,7 +116,6 @@ cmake --build . --config Release
 *Creating Distributable Archives*
 
 ```cmd
-cmake --install . --config Release
 cpack -C Release
 ```
 This generates `.zip` archive on Windows, `.tar.gz` archive on Linux. (build or dist directory under the CPack output)
