@@ -123,7 +123,7 @@ This generates `.zip` archive on Windows, `.tar.gz` archive on Linux. (build or 
 
 #
 ### UTF-8 and Multilingual File/Folder Name Support
-The tool supports UTF-8 names on both Windows and Linux.
+The tool supports UTF-8 characters on both Windows and Linux.
 If it fails on Windows, follow these steps:
 1. Make sure config.txt is UTF-8 encoded:
    - Open the file in a text editor.
