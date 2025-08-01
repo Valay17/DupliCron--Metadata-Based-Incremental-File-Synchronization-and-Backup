@@ -122,6 +122,23 @@ cpack -C Release
 This generates `.zip` archive on Windows, `.tar.gz` archive on Linux. (build or dist directory under the CPack output)
 
 #
+### UTF-8 and Multilingual File/Folder Name Support
+The tool supports UTF-8 names on both Windows and Linux.
+If it fails on Windows, follow these steps:
+1. Make sure config.txt is UTF-8 encoded:
+   - Open the file in a text editor.
+   - Confirm the encoding is set to UTF-8 (without BOM).
+   - Save the file.
+     
+2. Change System Locale to support UTF-8
+   - Press `Win + R`, type `intl.cpl`, and press Enter.
+   - Go to the `Administrative` tab.
+   - Click “Change system locale…”.
+   - In the dialog that opens:
+     Check the box that says “Beta: Use Unicode UTF-8 for worldwide language support.”
+   - Click OK, then Restart your computer when prompted.
+
+#
 ### Configuration File Info
 
 DupliCron uses a simple text based configuration file to control its behavior.
