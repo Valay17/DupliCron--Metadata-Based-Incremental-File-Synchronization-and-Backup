@@ -200,7 +200,7 @@ namespace FailureDetect
             {
                 std::cerr << "Source not found in index: " << sourcePath << "\n";
                 Log.Info(std::string("[Recovery] Source not found in index: ") + sourcePath);
-                Log.Info(std::string("Check if source was present in previous run, if this is first run failure, then no issue, if not then delete all caches from folder because cache is corrupt "));
+                Log.Info(std::string("Check if source was present in previous run, if new source added, then no issue(source won't be copied now, so run again for new source addition), if not then delete all caches from folder because cache is corrupt "));
                 continue;
             }
             uint32_t sourceId = it->second;

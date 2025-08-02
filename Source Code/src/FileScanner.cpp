@@ -8,6 +8,45 @@
 
 namespace FS = std::filesystem;
 
+#ifdef _WIN32
+
+inline FS::path NormalizeLongPath(const FS::path& path)
+{
+    std::wstring wpath = path.wstring();
+
+    // Already normalized
+    if (wpath.starts_with(L"\\\\?\\"))
+        return path;
+
+    constexpr size_t MAX_PATH_LIMIT = 260;
+
+    if (wpath.size() >= MAX_PATH_LIMIT)
+    {
+        if (wpath.starts_with(L"\\\\"))
+        {
+            // UNC path: \\server\share → \\?\UNC\server\share
+            return FS::path(L"\\\\?\\UNC\\" + wpath.substr(2));
+        }
+        else
+        {
+            // Local drive path: C:\folder\file → \\?\C:\folder\file
+            return FS::path(L"\\\\?\\" + wpath);
+        }
+    }
+
+    // Path shorter than MAX_PATH: return as-is
+    return path;
+}
+
+#else
+
+inline FS::path NormalizeLongPath(const FS::path& path)
+{
+    return path;
+}
+
+#endif
+
 const std::vector<ScannedFileInfo>& FileScanner::GetFiles() const
 {
     return Files;
@@ -39,6 +78,7 @@ bool FileScanner::IsExcluded(const FS::path& Path) const
 void FileScanner::Scan(const std::string& RootPath)
 {
     FS::path Root(RootPath);
+    Root = NormalizeLongPath(Root);
     try
     {
         if (!FS::exists(Root))
@@ -97,11 +137,13 @@ void FileScanner::ScanDirectoryIterative(const FS::path& Root)
         }
         try
         {
-            for (const auto& Entry : FS::directory_iterator(Current))
+            FS::path normCurrent = NormalizeLongPath(Current);
+            for (const auto& Entry : FS::directory_iterator(normCurrent))
             {
                 try
                 {
-                    const auto& AbsPath = Entry.path();
+                    FS::path AbsPath = Entry.path();
+                    AbsPath = NormalizeLongPath(AbsPath);
                     // Skip symbolic links to avoid loops or unsupported files.
                     if (FS::is_symlink(Entry.symlink_status()))
                     {
@@ -121,7 +163,8 @@ void FileScanner::ScanDirectoryIterative(const FS::path& Root)
                     else if (Entry.is_regular_file())
                     {
                         ScannedFileInfo Info;
-                        Info.RelativePath = AbsPath.string();
+                        auto Temp = AbsPath.u8string();
+                        Info.RelativePath = std::string(Temp.begin(), Temp.end());
                         Info.Size = Entry.file_size();
                         Info.MTime = ToTimeT(Entry.last_write_time());
                         Files.push_back(std::move(Info));

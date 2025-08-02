@@ -9,11 +9,85 @@
 #include <Windows.h>
 #include <thread>
 #include <chrono>
+
+inline std::filesystem::path NormalizeLongPath(const std::filesystem::path& path)
+{
+    std::wstring wpath = path.wstring();
+
+    // Already normalized
+    if (wpath.starts_with(L"\\\\?\\"))
+        return path;
+
+    constexpr size_t MAX_PATH_LIMIT = 260;
+
+    if (wpath.size() >= MAX_PATH_LIMIT)
+    {
+        if (wpath.starts_with(L"\\\\"))
+        {
+            // UNC path: \\server\share → \\?\UNC\server\share
+            return std::filesystem::path(L"\\\\?\\UNC\\" + wpath.substr(2));
+        }
+        else
+        {
+            // Local drive path: C:\folder\file → \\?\C:\folder\file
+            return std::filesystem::path(L"\\\\?\\" + wpath);
+        }
+    }
+
+    // Path shorter than MAX_PATH: return as-is
+    return path;
+}
+
+inline std::filesystem::path RemoveLongPathPrefix(const std::filesystem::path& path)
+{
+    std::wstring wpath = path.wstring();
+
+    constexpr wchar_t longPrefix[] = L"\\\\?\\";
+    constexpr size_t longPrefixLen = 4;
+
+    if (!wpath.starts_with(longPrefix))
+    {
+        return path;
+    }
+
+    if (wpath.size() > longPrefixLen + 3 && wpath.compare(longPrefixLen, 4, L"UNC\\") == 0)
+    {
+        std::wstring newPath = L"\\\\" + wpath.substr(longPrefixLen + 4);
+        return std::filesystem::path(newPath);
+    }
+    else
+    {
+        return std::filesystem::path(wpath.substr(longPrefixLen));
+    }
+}
+
+inline std::wstring UTF8ToUTF16(const std::string& utf8)
+{
+    if (utf8.empty())
+        return std::wstring();
+
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, utf8.data(), (int)utf8.size(), nullptr, 0);
+    std::wstring utf16(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, utf8.data(), (int)utf8.size(), &utf16[0], size_needed);
+    return utf16;
+}
+
 #else
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <cstring>
+
+inline std::filesystem::path NormalizeLongPath(const std::filesystem::path& path)
+{
+    return path;
+}
+
+inline std::filesystem::path RemoveLongPathPrefix(const std::filesystem::path& path)
+{
+    return path;
+}
 
 bool FileCopier::CopyFileRangeSupported = true;
 
@@ -56,7 +130,7 @@ namespace {
             output += c;
         }
         return output;
-}
+    }
 }
 #endif
 
@@ -81,6 +155,8 @@ bool FileCopier::PerformFileCopy(const std::string& sourcePath, const std::strin
             else
             {
                 std::string TopRootFolderName = TopFolderRootPath.filename().string();
+                TopFolderRootPath = RemoveLongPathPrefix(TopFolderRootPath);
+                FilePath = RemoveLongPathPrefix(FilePath);
                 std::filesystem::path relativePath = std::filesystem::relative(FilePath, TopFolderRootPath);
                 finalDestPath = std::filesystem::path(ConfigGlobal::DestinationPath) / TopRootFolderName / relativePath;
             }
@@ -91,19 +167,31 @@ bool FileCopier::PerformFileCopy(const std::string& sourcePath, const std::strin
             finalDestPath = std::filesystem::path(ConfigGlobal::DestinationPath) / sanitizedRelPath;
         }
 
-        std::cout << "[COPY] " << sourcePath << " → " << finalDestPath << "\n";
+        std::cout << "[COPY] " << sourcePath << " → " << finalDestPath.string() << "\n";
         Log.Info(std::string("[FileCopier] Copying File: ") + sourcePath + std::string(" → ") + finalDestPath.string());
-        std::filesystem::create_directories(finalDestPath.parent_path());
+        
+        std::filesystem::path normalizedDest = NormalizeLongPath(finalDestPath);
+        std::filesystem::create_directories(normalizedDest.parent_path());
+        
         uintmax_t fileSize = std::filesystem::file_size(sourcePath);
+
 #ifdef _WIN32
         if (fileSize >= LARGE_FILE_THRESHOLD)
         {
             std::wstringstream cmd;
 
-            std::wstring wSource = std::filesystem::path(sourcePath).parent_path().wstring();
+            std::string srcUtf8 = std::filesystem::path(sourcePath).parent_path().string();
+            std::wstring wSource = UTF8ToUTF16(srcUtf8);
+            wSource = RemoveLongPathPrefix(wSource);
             wSource = EscapeRootDriveForCmd(wSource);
-            std::wstring wDest = finalDestPath.parent_path().wstring();
-            std::wstring wFileName = std::filesystem::path(sourcePath).filename().wstring();
+            
+            std::string destUtf8 = finalDestPath.parent_path().string();
+            std::wstring wDest = UTF8ToUTF16(destUtf8);
+            wDest = RemoveLongPathPrefix(wDest);
+            wDest = EscapeRootDriveForCmd(wDest);
+            
+            std::string fileUtf8 = std::filesystem::path(sourcePath).filename().string();
+            std::wstring wFileName = UTF8ToUTF16(fileUtf8);
 
             cmd << L"robocopy \"" << wSource << L"\" \"" << wDest << L"\" \"" << wFileName << L"\" /R:2 /W:5 /NFL /NDL /NJH /MT:" << ConfigGlobal::ThreadCount;
 
@@ -121,8 +209,8 @@ bool FileCopier::PerformFileCopy(const std::string& sourcePath, const std::strin
         }
         else
         {
-            std::wstring srcW(sourcePath.begin(), sourcePath.end());
-            std::wstring dstW(finalDestPath.wstring());
+            std::wstring srcW = UTF8ToUTF16(sourcePath);
+            std::wstring dstW = UTF8ToUTF16(normalizedDest.string());
 
             /*if (!std::filesystem::exists(sourcePath))
             {
@@ -232,30 +320,47 @@ bool FileCopier::PerformFileCopy(const std::string& sourcePath, const std::strin
 // Removes special characters (like ':' or leading '/') from absolute paths to generate a sanitized, consistent path string for internal use.
 std::string FileCopier::SanitizePath(const std::string& absPath)
 {
+    std::filesystem::path input(absPath);
     std::string result;
-    bool isWindowsPath = false;
-    if (absPath.size() > 2 && absPath[1] == ':' && absPath[2] == '/')
+
+#ifdef _WIN32
+    std::string native = input.string();
+
+    // Strip long path prefix
+    if (native.starts_with(R"(\\?\UNC\)"))
     {
-        isWindowsPath = true;
-        result += absPath[0]; // Keep the drive letter (e.g., 'C') only
-        for (size_t i = 3; i < absPath.size(); ++i) // Copy remaining characters, skipping colons
+        result = "UNC/" + native.substr(8);  // Remove \\?\UNC\ prefix and add UNC/
+    }
+    else if (native.starts_with(R"(\\?\)"))
+    {
+        // Remove \\?\ prefix
+        result = native.substr(4);
+
+        // If it looks like "E:" (single letter + colon) at the start, strip colon
+        if (result.size() >= 2 && result[1] == ':')
         {
-            char ch = absPath[i];
-            if (ch != ':')
-                result += ch;
+            result = std::string(1, result[0]) + result.substr(2);  // Remove colon at pos 1
         }
+    }
+    else if (native.starts_with(R"(\\)"))
+    {
+        result = "UNC/" + native.substr(2); // Convert \\server\share → UNC/server/share
+    }
+    else if (native.size() > 2 && native[1] == ':' && (native[2] == '/' || native[2] == '\\'))
+    {
+        // C:/Users/ → C/Users/...
+        result = std::string(1, native[0]) + native.substr(2);
     }
     else
     {
-        for (size_t i = 0; i < absPath.size(); ++i)
-        {
-            char ch = absPath[i];
-            if (i == 0 && ch == '/') // Skip leading slash in Unix paths
-                continue;
-            if (ch != ':') // Remove any colons (just in case)
-                result += ch;
-        }
+        result = native;
     }
+
+#else
+    result = input.generic_string();
+    if (result.starts_with("/"))
+        result = result.substr(1);
+#endif
     return result;
 }
 

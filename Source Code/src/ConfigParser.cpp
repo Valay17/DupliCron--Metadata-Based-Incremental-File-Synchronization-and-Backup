@@ -59,7 +59,38 @@ void ConfigParser::AddInfo(const std::string& Message)
 bool ConfigParser::IsAbsolutePath(const std::string& Path)
 {
 #ifdef _WIN32
-    return Path.size() >= 3 && std::isalpha(static_cast<unsigned char>(Path[0])) && Path[1] == ':' && (Path[2] == '\\' || Path[2] == '/');
+    if (Path.size() >= 4 && Path.compare(0, 4, R"(\\.\)") == 0)
+    {
+        return false;
+    }
+
+    if (Path.size() >= 4 && Path.compare(0, 4, "\\\\?\\") == 0)
+    {
+        // After \\?\, check what comes next:
+        if (Path.size() >= 8 && Path.compare(4, 4, "UNC\\") == 0)
+        {
+            return true;
+        }
+        else if (Path.size() >= 6 && Path[5] == ':')
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    if (Path.size() >= 3 && std::isalpha(static_cast<unsigned char>(Path[0])) && Path[1] == ':' && (Path[2] == '\\' || Path[2] == '/'))
+    {
+        return true;
+    }
+
+    if (Path.size() >= 2 && Path[0] == '\\' && Path[1] == '\\')
+    {
+        return true;
+    }
+    return false;
 #else
     return !Path.empty() && Path[0] == '/';
 #endif
@@ -94,6 +125,12 @@ bool ConfigParser::IsParentDirectory(const std::string& Parent, const std::strin
 
 bool ConfigParser::Parse(const std::string& FilePath)
 {
+    if (!std::filesystem::exists(FilePath))
+    {
+        AddError("Config file does not exist: " + FilePath);
+        return false;
+    }
+
     std::ifstream File(FilePath);
     if (!File.is_open())
     {
@@ -140,9 +177,10 @@ bool ConfigParser::Parse(const std::string& FilePath)
                 continue;
             }
             FS::path SourcePath(Value);
-            if (!FS::exists(SourcePath))
+            std::error_code ec;
+            if (!FS::exists(SourcePath, ec))
             {
-                AddError("Line " + std::to_string(LineNumber) + ": Source path does not exist.");
+                AddError("Line " + std::to_string(LineNumber) + ": Source path does not exist." + ec.message());
                 continue;
             }
             if (!FS::is_directory(SourcePath) && !FS::is_regular_file(SourcePath))
