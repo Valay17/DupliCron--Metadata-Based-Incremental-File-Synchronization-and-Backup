@@ -122,6 +122,23 @@ cpack -C Release
 This generates `.zip` archive on Windows, `.tar.gz` archive on Linux. (build or dist directory under the CPack output)
 
 #
+### UTF-8 and Multilingual File/Folder Name Support
+The tool supports UTF-8 characters on both Windows and Linux.
+If it fails on Windows, follow these steps:
+1. Make sure config.txt is UTF-8 encoded:
+   - Open the file in a text editor.
+   - Confirm the encoding is set to UTF-8 (without BOM).
+   - Save the file.
+     
+2. Change System Locale to support UTF-8
+   - Press `Win + R`, type `intl.cpl`, and press Enter.
+   - Go to the `Administrative` tab.
+   - Click “Change system locale…”.
+   - In the dialog that opens:
+     Check the box that says “Beta: Use Unicode UTF-8 for worldwide language support.”
+   - Click OK, then Restart your computer when prompted.
+
+#
 ### Configuration File Info
 
 DupliCron uses a simple text based configuration file to control its behavior.
@@ -418,7 +435,7 @@ Hardcoded Values(Change only if you know what you are doing):
 - **Thread Count for Hasher**  
   Adjust the default number of threads used by the Hasher. Typically, this value is determined by the selected Mode, but you can modify it here if you want to specify a different number. Default is `2`.
 
-  FileHasher.hpp `Line 18`, `Line 20`. Replace `ConfigGlobal::ThreadCount` with desired value(Change the Log `Line 14` a well if you update).
+  FileHasher.hpp `Line 18`, `Line 20`. Replace `ConfigGlobal::ThreadCount` with desired value(Change the Log `Line 14` as well if you update).
 
 - **File Size Threshold for Small and Large File Queue**  
   Defines the size boundary used to classify files as small or large, determining how they are queued and processed during synchronization. Default is `2 GB`.
