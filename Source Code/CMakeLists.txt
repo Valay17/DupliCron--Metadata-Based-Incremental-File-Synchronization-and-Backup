@@ -55,7 +55,7 @@ else()
         COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:DupliCron>/Meta_Cache"
         COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:DupliCron>/Sync_Logs"
         COMMAND /bin/sh -c "[ -f \"$<TARGET_FILE_DIR:DupliCron>/Config.txt\" ] ||cp"${CMAKE_SOURCE_DIR}/Config.txt $<TARGET_FILE_DIR:DupliCron>/Config.txt""
-# Do not edit the cp command line, it is not a whitespace error
+# Do not edit the cp command line, it is not a whitespace error, adding space makes it unrecognizable by bash
     )
 endif()
 
