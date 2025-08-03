@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1> <p>DupliCron - Metadata Based Incremental File Backup</p> </h1>
+<h1> <p>DupliCron – Metadata-Based Incremental File Synchronization and Backup</p> </h1>
 </div>
 
 DupliCron is a fast and highly configurable file synchronization utility for local and external backups, available on both Windows and Linux. It supports multiple source directories and uses a metadata-based incremental sync approach to avoid redundant copying. File changes are detected using a combination of file size and modification time, which are hashed and stored in a binary cache to ensure accurate and efficient updates across runs.
