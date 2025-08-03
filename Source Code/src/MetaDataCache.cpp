@@ -87,6 +87,17 @@ bool MetaDataCache::Load(uint32_t MetaDataCacheBinFileNumber)
         if (!ReadBinary(file, info.Visited)) return false;
         if (!ReadBinary(file, info.MissCount)) return false;
 
+        /*std::cout << "[MetaDataCache::Load] Loaded entry:\n";
+        std::cout << "  Path: " << info.AbsolutePath << "\n";
+        std::cout << "  Size: " << info.Size << "\n";
+        std::cout << "  MTime: " << info.MTime << "\n";
+        std::cout << "  Hash: ";
+        for (unsigned char byte : info.Hash)
+        {
+            printf("%02X", byte);
+        }
+        std::cout << "\n";*/
+
         Entries.emplace(info.AbsolutePath, std::move(info));
     }
     Log.Info(std::string("[MetaDataCache::Load] Finished Loading ") + std::to_string(Entries.size()) + std::string(" entries."));
@@ -137,6 +148,13 @@ FileInfo MetaDataCache::GetEntry(const std::string& path) const
 void MetaDataCache::MarkVisited(const std::string& path)
 {
     std::lock_guard lock(MetaCacheMutex);
+    /*std::cout << "[MarkVisited] Looking for: " << path << "\n";
+    Log.Info(std::string("[MarkVisited] Marked as visited: ") + path);
+    std::cout << "[MarkVisisted] Current cache keys:\n";
+    for (const auto& [k, v] : Entries)
+    {
+        std::cout << "  -> " << k << "\n";
+    }*/
     auto it = Entries.find(path);
     if (it != Entries.end())
     {
@@ -148,6 +166,14 @@ void MetaDataCache::MarkVisited(const std::string& path)
 void MetaDataCache::UpdateEntry(const std::string& path, const FileInfo& info)
 {
     std::lock_guard lock(MetaCacheMutex);
+
+    /*std::cout << "[UpdateEntry] Looking for: " << path << "\n";
+    Log.Info(std::string("[UpdateEntry] Updated cache entry: ") + path);
+    std::cout << "[UpdateEntry] Current cache keys:\n";
+    for (const auto& [k, v] : Entries)
+    {
+        std::cout << "  -> " << v.Copied << "\n";
+    }*/
 
     auto it = Entries.find(path);
     if (it != Entries.end())
@@ -193,6 +219,14 @@ void MetaDataCache::RemoveStaleEntries(int maxMissCount)
         ++it;
     }
 }
+/*
+void MetaDataCache::ResetVisitedFlags()
+{
+    for (auto& [path, info] : Entries)
+    {
+        info.Visited = false;
+    }
+}*/
 
 std::unordered_map<std::string, FileInfo> MetaDataCache::GetAllEntries() const
 {
@@ -207,6 +241,12 @@ bool MetaDataCache::LoadCopiedState()
     IDCopiedFlag.clear();
 
     std::ifstream file(ConfigGlobal::StateIndexFileName, std::ios::binary);
+
+    if (!file)
+    {
+        // No file yet is not an error(first run)
+        return true;
+    }
 
     uint32_t count = 0;
     file.read(reinterpret_cast<char*>(&count), sizeof(count));
@@ -257,7 +297,7 @@ bool MetaDataCache::SaveCopiedState()
             return false;
         }
     }
-    Log.Info(std::string("[SaveCopiedState] Loaded ") + std::to_string(IDCopiedFlag.size()) + std::string(" entries."));
+    Log.Info(std::string("[SaveCopiedState] Saved ") + std::to_string(IDCopiedFlag.size()) + std::string(" entries."));
     return true;
 }
 
@@ -274,6 +314,32 @@ void MetaDataCache::ResetCopiedFlags()
     SaveCopiedState();
     Log.Info(std::string("[ResetCopiedFlags] Copy Flags Reset"));
 }
+/*
+bool MetaDataCache::ResetCopiedFlagFor(uint32_t BinID)
+{
+    LoadCopiedState();
+    bool updated = false;
+    {
+        std::lock_guard lock(MetaCacheMutex);
+
+        auto it = IDCopiedFlag.find(BinID);
+        if (it != IDCopiedFlag.end())
+        {
+            it->second = false;
+            updated = true;
+        }
+    }
+    
+    if (updated)
+    {
+        Log.Info(std::string("[ResetCopiedFlagFor] Copy Flag Reset for BinID = ") + std::to_string(BinID));
+        return SaveCopiedState();
+    }
+    // Optional: insert new ID with false
+    // IDCopiedFlag[BinID] = false;
+    // return SaveCopiedState();
+    return false;
+} */
 
 void MetaDataCache::MarkCopied(uint32_t BinID)
 {
