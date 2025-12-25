@@ -358,7 +358,7 @@ bool ConfigParser::Parse(const std::string& FilePath)
                     continue;
                 }
                 ConfigGlobal::GodSpeedParallelSourcesCount = ValueNum;
-                AddInfo("MaxLogFiles set to " + std::to_string(ValueNum));
+                AddInfo("GodSpeedParallelSourcesCount set to " + std::to_string(ValueNum));
             }
             catch (...)
             {
