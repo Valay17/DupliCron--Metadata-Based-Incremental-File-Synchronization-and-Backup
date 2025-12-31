@@ -211,7 +211,8 @@ bool FileCopier::PerformFileCopy(const std::string& sourcePath, const std::strin
         {
             std::wstring srcW = UTF8ToUTF16(sourcePath);
             std::wstring dstW = UTF8ToUTF16(normalizedDest.string());
-
+            
+            //Redundant because alreadyc checking but keep commented in case there's some niche case that I kept this in the first place for
             /*if (!std::filesystem::exists(sourcePath))
             {
                 std::wcerr << L"[ERROR] Source file does not exist: " << srcW << L"\n";
@@ -226,6 +227,28 @@ bool FileCopier::PerformFileCopy(const std::string& sourcePath, const std::strin
                 HandleCopyFailure(sourcePath, "CopyFileExW failed", err);
                 return false;
             }
+            //Alt implementation with this behavior:
+            //Skips copy if same file name at source, does not overwrite(no comparisons done oher than file name)
+            /*
+            BOOL result = CopyFileExW(srcW.c_str(), dstW.c_str(), nullptr, nullptr, nullptr, COPY_FILE_FAIL_IF_EXISTS | COPY_FILE_COPY_SYMLINK);
+            if (!result)
+            {
+                DWORD err = GetLastError();
+                if (err == ERROR_FILE_EXISTS)
+                {
+                    // Destination file exists, skipping copy - not a fatal error
+                    std::wcerr << L"[INFO] Destination file already exists, skipping copy: " << dstW << L"\n";
+                    // Continue execution without returning false
+                }
+                else
+                {
+                    // Other errors: treat as failure
+                    std::wcerr << L"[ERROR] CopyFileExW failed for " << dstW << L" (Error: " << err << L")\n";
+                    HandleCopyFailure(sourcePath, "CopyFileExW failed", err);
+                    return false;
+                }
+            }
+            */
         }
 #else
     std::string escapedDestPath = escapeShellChars(finalDestPath.string());

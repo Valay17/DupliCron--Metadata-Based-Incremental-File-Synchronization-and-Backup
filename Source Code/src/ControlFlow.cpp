@@ -35,6 +35,7 @@ int ControlFlow::Run()
 
     if (!FailureDetect::WasLastFailure() && !FailureDetect::WasLastSuccess())
     {
+        // No state files exist, create .Failure to indicate starting sync
         FailureDetect::MarkFailure();
     }
     else if (FailureDetect::WasLastFailure())
@@ -85,8 +86,8 @@ int ControlFlow::Run()
         Log.Info(Info);
     }
 
-    Log.Info("Scanning Sources...");
-    std::cout << "Scanning Sources...\n";
+    Log.Info("Scanning Source Directories...");
+    std::cout << "Scanning Source Directories...\n";
 
     ThreadPool Pool(ConfigGlobal::ThreadCount);
     std::unordered_map<std::string, std::vector<ScannedFileInfo>> PerSourceResults;
